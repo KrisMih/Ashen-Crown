@@ -11,7 +11,7 @@ class Item
         bool tradeable;
 
     public:
-        Item(const std::string name, int value, bool tradeable);
+        Item(const std::string& name, int value, bool tradeable);
 
         std::string getName() const;
 

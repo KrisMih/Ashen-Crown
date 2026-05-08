@@ -2,7 +2,7 @@
 #include "item.h"
 #include "../entities/character.h"
 
-Item::Item(const std::string name, int value, bool tradeable)
+Item::Item(const std::string& name, int value, bool tradeable)
     :name(name), value(value), tradeable(tradeable)
 {
 
