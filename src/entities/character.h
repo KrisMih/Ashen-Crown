@@ -46,7 +46,7 @@ class Character : public Entity
 
         void spendGold(int amount);
 
-        void levelUp();
+        virtual void levelUp();
 
         void equipWeapon(Weapon * weapon);
 
