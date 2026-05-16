@@ -1,5 +1,7 @@
 #include <iostream>
 #include "character.h"
+#include "../items/inventory.h"
+#include "../items/statuseffects.h"
 
 Character::Character(const std::string& name, int HP, int ATK, int DEF, int MP)
     :Entity(name, HP), ATK(ATK), DEF(DEF), MP(MP), level(1), gold(0), XP(0), inventory(nullptr), equippedWeapon(nullptr), equippedArmor(nullptr)
@@ -37,6 +39,11 @@ int Character::getGold() const
     return this->gold;
 }
 
+Inventory * Character::getInventory() const
+{
+    return this->inventory;
+}
+
 void Character::gainXP(int amount)
 {
     this->XP += amount;
@@ -57,6 +64,8 @@ void Character::spendGold(int amount)
 
     this->gold -= amount;
 }
+
+
 
 void Character::levelUp()
 {
@@ -95,21 +104,46 @@ void Character::addEffect(StatusEffect * effect)
 
 void Character::processEffects()
 {
-    //Will be implemented after proper declaration of 'StatusEffects'
+
+    for(int i = 0; i < this->effects.size(); i++)
+    {
+        this->effects[i]->apply(*this);
+    }
+
+    for(int i = this->effects.size() - 1; i >= 0; i--)
+    {
+
+        if(this->effects[i]->isExpired())
+        {
+            delete this->effects[i];
+            this->effects.erase(this->effects.begin() + i);
+        }
+
+    }
+
 }
 
 bool Character::isStunned() const
 {
 
-    /* for(int i = 0; i < this->effects.size(); i++)
+    for(int i = 0; i < this->effects.size(); i++)
     {
-        if(this->effects[i] == STUN) //use 'STUN' until a proper 'StatusEffect' is implemented
+        Stun* stun = dynamic_cast<Stun*>(this->effects[i]);
+
+        if(stun && stun->isStunned()) 
         {
             return true;
         }
 
-    } */ //for the moment it will be commented until 'StatusEffect' is implemented
- 
+        Freeze* freeze = dynamic_cast<Freeze*>(this->effects[i]);
+
+        if(freeze && freeze->isFrozen())
+        {
+            return true;
+        }
+
+    }
+
     return false;
 }
 
