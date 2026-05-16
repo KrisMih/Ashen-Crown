@@ -40,6 +40,8 @@ class Character : public Entity
 
         int getGold() const;
 
+        Inventory* getInventory() const;
+
         void gainXP(int amount);
 
         void gainGold(int amount);
