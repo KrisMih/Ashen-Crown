@@ -1,6 +1,7 @@
 #include <iostream>
 #include "classes.h"
 #include "enemy.h"
+#include "../items/statuseffects.h"
 #include <algorithm>
 
 Warrior::Warrior(const std::string& name)
@@ -83,7 +84,7 @@ void Warrior::shieldBash(Enemy& target)
     std::cout << "\033[1;31m⚔ Shield Bash!\033[0m " << this->name
               << " slams " << target.getName() << " for " << dmg << " damage!\n";
     target.takeDamage(dmg);
-    //target.addEffect(new Stun()); NO STATUS EFFECTS YET!!!
+    target.addEffect(new Stun()); 
 }
 
 void Warrior::whirlwind(Enemy& target)
@@ -206,7 +207,7 @@ void Mage::fireball(Enemy& target)
     std::cout << "\033[1;31m🔥 Fireball!\033[0m " << this->name
               << " hurls a fireball for " << dmg << " damage!\n";
     target.takeDamage(dmg);
-    //target.addEffect(new Burn(1)); NO STATUS EFFECT YET!!!
+    target.addEffect(new Burn(1));
 }
 
 void Mage::iceBlast(Enemy& target)
@@ -230,7 +231,7 @@ void Mage::iceBlast(Enemy& target)
     std::cout << "\033[1;36m❄ Ice Blast!\033[0m " << this->name
               << " freezes " << target.getName() << " for " << dmg << " damage!\n";
     target.takeDamage(dmg);
-    //target.addEffect(new Stun()); NO STATUS EFFECT YET
+    target.addEffect(new Stun());
 }
 
 void Mage::thunderstorm(Enemy& target)
@@ -353,7 +354,7 @@ void Rogue::poisonBlade(Enemy& target)
     std::cout << "\033[1;32m☠ Poison Blade!\033[0m " << this->name
               << " coats their blade in poison for " << dmg << " damage!\n";
     target.takeDamage(dmg);
-    //target.addEffect(new Poison(2)); NO STATUS EFFECTS YET
+    target.addEffect(new Poison(2));
 }
 
 void Rogue::shadowStep(Enemy& target)

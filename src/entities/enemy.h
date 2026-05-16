@@ -1,5 +1,7 @@
 #pragma once
 #include "entity.h"
+#include "../items/statuseffects.h"
+#include <vector>
 #include <string>
 
 class Character;
@@ -19,6 +21,7 @@ class Enemy : public Entity
         std::string description;
         Item * dropReward;
         float dropChance;
+        std::vector<StatusEffect*> effects;
 
     public:
         Enemy(const std::string& name, int HP, int ATK, int DEF, int XPreward, int goldReward, const std::string& description);
@@ -39,6 +42,8 @@ class Enemy : public Entity
         
         bool isImmuneToCold() const;
 
+        bool isStunned() const;
+
         Item * getDropReward() const;
 
         float getDropChance() const;
@@ -46,6 +51,10 @@ class Enemy : public Entity
         std::string getDescription() const;
 
         virtual void attack(Entity& target) = 0;
+
+        void addEffect(StatusEffect* effect);
+
+        void processEffects();
 
         void displayStatus() const override;
 

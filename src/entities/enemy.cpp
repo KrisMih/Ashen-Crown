@@ -2,6 +2,7 @@
 #include <string>
 #include "enemy.h"
 #include "character.h"
+#include "../items/statuseffects.h"
 #include "entity.h"
 
 Enemy::Enemy(const std::string& name, int HP, int ATK, int DEF, int XPreward, int goldReward, const std::string& description)
@@ -65,6 +66,56 @@ std::string Enemy::getDescription() const
     return this->description;
 }
 
+void Enemy::addEffect(StatusEffect* effect)
+{
+    this->effects.push_back(effect);
+}
+
+void Enemy::processEffects()
+{
+
+    for(int i = 0; i < this->effects.size(); i++)
+    {
+        this->effects[i]->apply(*this);
+    }
+
+    for(int i = this->effects.size() - 1; i >= 0; i--)
+    {
+
+        if(this->effects[i]->isExpired())
+        {
+            delete this->effects[i];
+            this->effects.erase(this->effects.begin() + i);
+        }
+
+    }
+
+}
+
+bool Enemy::isStunned() const
+{
+
+    for(int i = 0; i < this->effects.size(); i++)
+    {
+        Stun* stun = dynamic_cast<Stun*>(this->effects[i]);
+
+        if(stun && stun->isStunned()) 
+        {
+            return true;
+        }
+
+        Freeze* freeze = dynamic_cast<Freeze*>(this->effects[i]);
+
+        if(freeze && freeze->isFrozen()) 
+        {
+            return true;
+        }
+
+    }
+    
+    return false;
+}
+
 void Enemy::displayStatus() const
 {
     std::cout << this->name << " — HP: " << this->HP << "/" << this->maxHP
@@ -73,16 +124,42 @@ void Enemy::displayStatus() const
     std::cout << this->description << "\n";
     std::cout << "Immunities: ";
     bool hasImmunity = false;
-    if(this->immuneToFire)   { std::cout << "[Fire] ";   hasImmunity = true; }
-    if(this->immuneToPoison) { std::cout << "[Poison] "; hasImmunity = true; }
-    if(this->immuneToCold)   { std::cout << "[Cold] ";   hasImmunity = true; }
-    if(!hasImmunity)         { std::cout << "None"; }
+
+    if(this->immuneToFire)
+    { 
+        std::cout << "[Fire] ";   
+        hasImmunity = true; 
+    }
+
+    if(this->immuneToPoison) 
+    { 
+        std::cout << "[Poison] "; 
+        hasImmunity = true; 
+    }
+
+    if(this->immuneToCold)   
+    { 
+        std::cout << "[Cold] ";   
+        hasImmunity = true; 
+    }
+
+    if(!hasImmunity)         
+    { 
+        std::cout << "None"; 
+    }
+
     std::cout << "\n";
 }
 
 Enemy::~Enemy()
 {
     delete this->dropReward;
+
+    for(int i = 0; i < this->effects.size(); i++)
+    {
+        delete this->effects[i];
+    }
+
 }
 
 Goblin::Goblin()
