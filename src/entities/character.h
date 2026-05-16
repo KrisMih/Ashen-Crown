@@ -42,6 +42,8 @@ class Character : public Entity
 
         Inventory* getInventory() const;
 
+        void initInventory();
+
         void gainXP(int amount);
 
         void gainGold(int amount);
@@ -73,6 +75,8 @@ class Character : public Entity
         virtual void showSkills() const = 0;
 
         virtual std::string getClassName() const = 0;
+
+        void attack(Entity& target) override;
 
         virtual ~Character();
 };

@@ -1,6 +1,7 @@
 #include <iostream>
 #include "character.h"
 #include "../items/inventory.h"
+#include "../items/item.h"
 #include "../items/statuseffects.h"
 
 Character::Character(const std::string& name, int HP, int ATK, int DEF, int MP)
@@ -42,6 +43,11 @@ int Character::getGold() const
 Inventory * Character::getInventory() const
 {
     return this->inventory;
+}
+
+void Character::initInventory()
+{
+    this->inventory = new Inventory(10);
 }
 
 void Character::gainXP(int amount)
@@ -163,6 +169,39 @@ void Character::showStats() const
     std::cout << "DEF: " << this->DEF << "\n";
     std::cout << "MP: " << this->MP << "\n";
     std::cout << "Gold: " << this->gold << "\n";
+
+    std::cout << "\nEquipped:\n";
+
+    if(this->equippedWeapon != nullptr)
+    {
+        std::cout << "  Weapon: ";
+        this->equippedWeapon->getDescription();
+    }
+
+    else
+    {
+        std::cout << "  Weapon: None\n";
+    }
+
+    if(this->equippedArmor != nullptr)
+    {
+        std::cout << "  Armor: ";
+        this->equippedArmor->getDescription();
+    }
+
+    else
+    {
+        std::cout << "  Armor: None\n";
+    }
+
+}
+
+void Character::attack(Entity& target)
+{
+    int dmg = std::max(1, this->ATK - 2);
+    std::cout << this->name << " attacks " << target.getName()
+              << " for " << dmg << " damage!\n";
+    target.takeDamage(dmg);
 }
 
 Character::~Character()

@@ -1,6 +1,6 @@
 #include <iostream>
 #include "statuseffects.h"
-#include "entity.h"
+#include "../entities/entity.h"
 
 StatusEffect::StatusEffect(const std::string& effectName, int duration, int damage)
     :effectName(effectName), duration(duration), damage(damage)

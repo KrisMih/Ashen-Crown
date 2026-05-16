@@ -1,11 +1,11 @@
 #pragma once
 #include "entity.h"
 #include "../items/statuseffects.h"
+#include "../items/item.h"
 #include <vector>
 #include <string>
 
 class Character;
-class Item;
 
 class Enemy : public Entity
 {
@@ -50,7 +50,7 @@ class Enemy : public Entity
 
         std::string getDescription() const;
 
-        virtual void attack(Entity& target) = 0;
+        virtual void attack(Entity& target) override = 0;
 
         void addEffect(StatusEffect* effect);
 
