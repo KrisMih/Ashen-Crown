@@ -3,7 +3,7 @@
 #include "../entities/character.h"
 
 Item::Item(const std::string& name, int value, bool tradeable)
-    :name(name), value(value), tradeable(tradeable)
+    : name(name), value(value), tradeable(tradeable)
 {
 
 }
@@ -29,7 +29,7 @@ void Item::getDescription() const
 }
 
 Weapon::Weapon(const std::string& name, int value, bool tradeable, int ATKbonus, int MPbonus, int DEFbonus, const std::string allowedClass)
-    :Item(name, value, tradeable), ATKbonus(ATKbonus), MPbonus(MPbonus), DEFbonus(DEFbonus), allowedClass(allowedClass)
+    : Item(name, value, tradeable), ATKbonus(ATKbonus), MPbonus(MPbonus), DEFbonus(DEFbonus), allowedClass(allowedClass)
 {
 
 }
@@ -55,7 +55,7 @@ std::string Weapon::getAllowedClass() const
 }
 
 Sword::Sword(const std::string& name, int value, bool tradeable, int ATKbonus, int DEFbonus)
-    :Weapon(name, value, tradeable, ATKbonus, 0, DEFbonus, "Warrior")
+    : Weapon(name, value, tradeable, ATKbonus, 0, DEFbonus, "Warrior")
 {
 
 }
@@ -75,11 +75,14 @@ void Sword::use(Character& target)
 
 void Sword::getDescription() const
 {
-    std::cout << this->name << " [ATK +" << this->ATKbonus << " DEF +" << this->DEFbonus << "] - " << this->value << "g" << " | Class: Warrior\n";
+    std::cout << this->name
+              << " [ATK +" << this->ATKbonus
+              << " DEF +" << this->DEFbonus
+              << "] - " << this->value << "g | Class: Warrior\n";
 }
 
 Staff::Staff(const std::string& name, int value, bool tradeable, int MPbonus)
-    :Weapon(name, value, tradeable, 0, MPbonus, 0, "Mage")
+    : Weapon(name, value, tradeable, 0, MPbonus, 0, "Mage")
 {
 
 }
@@ -99,11 +102,13 @@ void Staff::use(Character& target)
 
 void Staff::getDescription() const
 {
-    std::cout << this->name << " [MP +" << this->MPbonus << "] - " << this->value << "g" << " | Class: Mage\n";
+    std::cout << this->name
+              << " [MP +" << this->MPbonus
+              << "] - " << this->value << "g | Class: Mage\n";
 }
 
 Dagger::Dagger(const std::string& name, int value, bool tradeable, int ATKbonus)
-    :Weapon(name, value, tradeable, ATKbonus, 0, 0, "Rogue")
+    : Weapon(name, value, tradeable, ATKbonus, 0, 0, "Rogue")
 {
 
 }
@@ -123,16 +128,18 @@ void Dagger::use(Character& target)
 
 void Dagger::getDescription() const
 {
-    std::cout << this->name << " [ATK +" << this->ATKbonus << "] - " << this->value << "g" << " | Class: Rogue\n";
+    std::cout << this->name
+              << " [ATK +" << this->ATKbonus
+              << "] - " << this->value << "g | Class: Rogue\n";
 }
 
 Armor::Armor(const std::string& name, int value, bool tradeable, int DEFbonus, const std::string& allowedClass)
-    :Item(name, value, tradeable), DEFbonus(DEFbonus), allowedClass(allowedClass)
+    : Item(name, value, tradeable), DEFbonus(DEFbonus), allowedClass(allowedClass)
 {
-
+    
 }
 
-int Armor::getDEFbonus() const 
+int Armor::getDEFbonus() const
 {
     return this->DEFbonus;
 }
@@ -143,14 +150,13 @@ std::string Armor::getAllowedClass() const
 }
 
 LightArmor::LightArmor(const std::string& name, int value, bool tradeable, int DEFbonus)
-    :Armor(name, value, tradeable, DEFbonus, "Mage")
+    : Armor(name, value, tradeable, DEFbonus, "Mage")
 {
 
 }
 
 void LightArmor::use(Character& target)
 {
-
     if(target.getClassName() != this->allowedClass)
     {
         std::cout << target.getName() << " cannot equip " << this->name << "! (Mage only)\n";
@@ -163,11 +169,13 @@ void LightArmor::use(Character& target)
 
 void LightArmor::getDescription() const
 {
-    std::cout << this->name << " [DEF +" << this->DEFbonus << "] - " << this->value << "g" << " | Class: Mage\n";
+    std::cout << this->name
+              << " [DEF +" << this->DEFbonus
+              << "] - " << this->value << "g | Class: Mage\n";
 }
 
 MediumArmor::MediumArmor(const std::string& name, int value, bool tradeable, int DEFbonus)
-    :Armor(name, value, tradeable, DEFbonus, "Rogue")
+    : Armor(name, value, tradeable, DEFbonus, "Rogue")
 {
 
 }
@@ -187,11 +195,13 @@ void MediumArmor::use(Character& target)
 
 void MediumArmor::getDescription() const
 {
-    std::cout << this->name << " [DEF +" << this->DEFbonus << "] - " << this->value << "g" << " | Class: Rogue\n";
+    std::cout << this->name
+              << " [DEF +" << this->DEFbonus
+              << "] - " << this->value << "g | Class: Rogue\n";
 }
 
 HeavyArmor::HeavyArmor(const std::string& name, int value, bool tradeable, int DEFbonus)
-    :Armor(name, value, tradeable, DEFbonus, "Warrior")
+    : Armor(name, value, tradeable, DEFbonus, "Warrior")
 {
 
 }
@@ -211,12 +221,13 @@ void HeavyArmor::use(Character& target)
 
 void HeavyArmor::getDescription() const
 {
-    std::cout << this->name << " [DEF +" << this->DEFbonus << "] - " << this->value << "g" << " | Class: Warrior\n";
+    std::cout << this->name
+              << " [DEF +" << this->DEFbonus
+              << "] - " << this->value << "g | Class: Warrior\n";
 }
 
-
 Potion::Potion(const std::string& name, int value, int healAmount)
-    :Item(name, value, true), healAmount(healAmount)
+    : Item(name, value, true), healAmount(healAmount)
 {
 
 }
@@ -224,10 +235,18 @@ Potion::Potion(const std::string& name, int value, int healAmount)
 void Potion::use(Character& target)
 {
     target.heal(this->healAmount);
-    std::cout << target.getName() << " drinks " << this->name << " and restores " << this->healAmount << " HP!\n";
+    std::cout << target.getName() << " drinks " << this->name
+              << " and restores " << this->healAmount << " HP!\n";
 }
 
 void Potion::getDescription() const
 {
-    std::cout << this->name << " [+" << this->healAmount << " HP]" << " - " << this->value << "g\n";
+    std::cout << this->name
+              << " [+" << this->healAmount << " HP]"
+              << " - " << this->value << "g\n";
+}
+
+int Potion::getHealAmount() const
+{
+    return this->healAmount;
 }

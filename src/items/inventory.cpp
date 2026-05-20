@@ -5,12 +5,11 @@
 Inventory::Inventory(int maxSize)
     :maxSize(maxSize)
 {
-
 }
 
 bool Inventory::addItem(Item * item)
 {
-
+    
     if(this->isFull())
     {
         std::cout << "Inventory is full" << '\n';
@@ -29,14 +28,41 @@ void Inventory::removeItem(int index)
 
 void Inventory::useItem(int index, Character& target)
 {
-    
+
     if(index < 0 || index >= this->items.size())
     {
         std::cout << "Invalid index!" << '\n';
         return;
     }
-    
-    this->items[index]->use(target);
+
+    Item* item = this->items[index];
+    item->use(target);
+
+    Potion* potion = dynamic_cast<Potion*>(item);
+
+    if(potion != nullptr)
+    {
+        delete this->items[index];
+        this->items.erase(this->items.begin() + index);
+        return;
+    }
+
+    Weapon* weapon = dynamic_cast<Weapon*>(item);
+
+    if(weapon != nullptr)
+    {
+        this->items.erase(this->items.begin() + index);
+        return;
+    }
+
+    Armor* armor = dynamic_cast<Armor*>(item);
+
+    if(armor != nullptr)
+    {
+        this->items.erase(this->items.begin() + index);
+        return;
+    }
+
 }
 
 void Inventory::getDescription() const
@@ -73,7 +99,7 @@ bool Inventory::isFull() const
 
 Inventory::~Inventory()
 {
-
+    
     for(int i = 0; i < this->items.size(); i++)
     {
         delete this->items[i];
