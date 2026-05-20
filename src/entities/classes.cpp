@@ -17,12 +17,20 @@ std::string Warrior::getClassName() const
 
 void Warrior::levelUp()
 {
+    int oldLevel = this->level;
     Character::levelUp();
-    this->maxHP += 20;
-    this->HP = this->maxHP;
-    this->ATK += 5;
-    this->DEF += 4;
-    this->MP += 5;
+
+    if(this->level > oldLevel)
+    {
+        this->maxHP += 30;
+        this->HP = this->maxHP;
+        this->ATK += 5;
+        this->DEF += 4;
+        this->MP += 5;
+        std::cout << "\033[1;33m★ LEVEL UP! You are now level " << this->level << "! ★\033[0m\n";
+        std::cout << "  HP max +" << 20 << " | ATK +" << 5 << " | DEF +" << 4 << " | MP +" << 5 << "\n";
+    }
+
 }
 
 void Warrior::showSkills() const
@@ -132,13 +140,21 @@ std::string Mage::getClassName() const
 
 void Mage::levelUp()
 {
+    int oldLevel = this->level;
     Character::levelUp();
-    this->maxHP += 10;
-    this->HP = this->maxHP;
-    this->ATK += 2;
-    this->DEF += 2;
-    this->MP += 20;
-    this->spellPower += 5;
+
+    if(this->level > oldLevel)
+    {
+        this->maxHP += 20;
+        this->HP = this->maxHP;
+        this->ATK += 2;
+        this->DEF += 2;
+        this->MP += 20;
+        this->spellPower += 5;
+        std::cout << "\033[1;33m★ LEVEL UP! You are now level " << this->level << "! ★\033[0m\n";
+        std::cout << "  HP max +" << 10 << " | ATK +" << 2 << " | DEF +" << 2 << " | MP +" << 20 << " | Spell Power +" << 5 << "\n";
+    }
+
 }
 
 void Mage::showSkills() const
@@ -263,13 +279,21 @@ std::string Rogue::getClassName() const
 
 void Rogue::levelUp()
 {
+    int oldLevel = this->level;
     Character::levelUp();
-    this->maxHP += 15;
-    this->HP = this->maxHP;
-    this->ATK += 4;
-    this->DEF += 3;
-    this->MP += 10;
-    this->critChance += 0.05f;
+
+    if(this->level > oldLevel)
+    {
+        this->maxHP += 25;
+        this->HP = this->maxHP;
+        this->ATK += 4;
+        this->DEF += 3;
+        this->MP += 10;
+        this->critChance += 0.05f;
+        std::cout << "\033[1;33m★ LEVEL UP! You are now level " << this->level << "! ★\033[0m\n";
+        std::cout << "  HP max +" << 15 << " | ATK +" << 4 << " | DEF +" << 3 << " | MP +" << 10 << "\n";
+    }
+
 }
 
 void Rogue::showSkills() const
