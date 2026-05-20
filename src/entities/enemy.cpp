@@ -163,7 +163,7 @@ Enemy::~Enemy()
 }
 
 Goblin::Goblin()
-    :Enemy("Goblin", 25, 6, 3, 30, 10, "A small, but vicious creature.")
+    :Enemy("Goblin", 25, 6, 3, 80, 10, "A small, but vicious creature.")
 {
     this->level = 1;
     this->dropChance = 0.5f;
@@ -191,7 +191,7 @@ void Goblin::attack(Entity& target)
 }
 
 Skeleton::Skeleton()
-    : Enemy("Skeleton", 35, 9, 4, 45, 15, "An undead warrior immune to poison.")
+    : Enemy("Skeleton", 35, 9, 4, 120, 15, "An undead warrior immune to poison.")
 {
     this->level = 1;
     this->dropChance = 0.4f;
@@ -212,7 +212,7 @@ void Skeleton::attack(Entity& target)
 
 
 Orc::Orc()
-    : Enemy("Orc", 80, 15, 12, 120, 50, "A brutish warrior with thick hide.")
+    : Enemy("Orc", 80, 15, 12, 250, 50, "A brutish warrior with thick hide.")
 {
     this->level = 3;
     this->dropChance = 0.5f;
@@ -232,7 +232,7 @@ void Orc::attack(Entity& target)
 }
 
 Dragon::Dragon()
-    : Enemy("Dragon", 150, 28, 8, 300, 150, "An ancient beast wreathed in fire."), turnCount(0), fireDMG(45)
+    : Enemy("Dragon", 150, 28, 8, 600, 150, "An ancient beast wreathed in fire."), turnCount(0), fireDMG(45)
 {
     this->level = 4;
     this->dropChance = 1.0f;
