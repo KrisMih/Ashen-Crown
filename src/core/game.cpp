@@ -33,61 +33,189 @@ void Game::buildWorld()
     startShop->addItem(new Potion("Health Potion", 20, 30));
     startShop->addItem(new Potion("Large Potion", 50, 80));
 
+    Shop* rogueShop = new Shop("Shady Dealer");
+    rogueShop->addItem(new Dagger("Shadow Dagger", 60, true, 14));
+    rogueShop->addItem(new MediumArmor("Leather Vest", 70, true, 8));
+    rogueShop->addItem(new Potion("Health Potion", 20, 30));
+
+    Shop* mageShop = new Shop("Arcane Library");
+    mageShop->addItem(new Staff("Oak Staff", 55, true, 18));
+    mageShop->addItem(new LightArmor("Silk Robe", 65, true, 6));
+    mageShop->addItem(new Potion("Health Potion", 20, 30));
+
     Shop* midShop = new Shop("Blacksmith");
     midShop->addItem(new Sword("Iron Sword", 50, true, 12, 3));
     midShop->addItem(new HeavyArmor("Iron Plate", 80, true, 10));
+    midShop->addItem(new Dagger("Steel Dagger", 45, true, 10));
+    midShop->addItem(new Staff("Battle Staff", 45, true, 12));
     midShop->addItem(new Potion("Health Potion", 20, 30));
 
-    Room* start = new Room("Ashenvale Village",
+    Shop* lateShop = new Shop("Wandering Merchant");
+    lateShop->addItem(new Potion("Large Potion", 50, 80));
+    lateShop->addItem(new Potion("Mega Potion", 100, 150));
+    lateShop->addItem(new Sword("Steel Sword", 120, true, 20, 5));
+    lateShop->addItem(new Dagger("Venom Dagger", 110, true, 18));
+    lateShop->addItem(new Staff("Crystal Staff", 110, true, 22));
+
+    Room* start         = new Room("Ashenvale Village",
         "A quiet village at the edge of a dark forest.");
-    Room* forest = new Room("Dark Forest",
+    Room* shadyAlley    = new Room("Shady Alley",
+        "A dark alley behind the village.",
+        nullptr, rogueShop);
+    Room* arcaneLibrary = new Room("Arcane Library",
+        "Dusty shelves filled with spell books.",
+        nullptr, mageShop);
+    Room* forest1       = new Room("Dark Forest",
         "Twisted trees block the moonlight.",
         new Goblin());
-    Room* clearing = new Room("Forest Clearing",
-        "A clearing with an old well. A merchant has set up camp here.",
+    Room* clearing      = new Room("Forest Clearing",
+        "A clearing with an old well.",
         nullptr, startShop);
-    Room* ruins = new Room("Ancient Ruins",
+    Room* forest2       = new Room("Deep Forest",
+        "The trees grow darker and more twisted.",
+        new Goblin());
+    Room* forest3       = new Room("Haunted Woods",
+        "Strange lights flicker between the trees.",
+        new Goblin());
+    Room* forest4       = new Room("Misty Forest",
+        "Thick fog obscures your vision.",
+        new Goblin());
+    Room* forest5       = new Room("Cursed Grove",
+        "The trees here look like twisted faces.",
+        new Goblin());
+    Room* ruins1        = new Room("Ancient Ruins",
         "Crumbling stone walls covered in vines.",
         new Skeleton());
-    Room* cave = new Room("Mountain Cave",
-        "A dark cave reeking of death.",
+    Room* graveyard     = new Room("Forgotten Graveyard",
+        "Rows of tombstones stretch into the darkness.",
+        new Skeleton());
+    Room* chapel        = new Room("Ruined Chapel",
+        "A desecrated place of worship.",
+        new Skeleton());
+    Room* ruins2        = new Room("Collapsed Tower",
+        "A tower that once stood tall, now in ruins.",
+        new Skeleton());
+    Room* mountainPass  = new Room("Mountain Pass",
+        "A narrow path through the mountains.",
         new Orc());
-    Room* midShopRoom = new Room("Blacksmith's Forge",
+    Room* midShopRoom   = new Room("Blacksmith's Forge",
         "The heat from the forge warms the room.",
         nullptr, midShop);
-    Room* dragonLair  = new Room("Dragon's Lair",
+    Room* cave1         = new Room("Mountain Cave",
+        "A dark cave reeking of death.",
+        new Orc());
+    Room* orcCamp       = new Room("Orc Camp",
+        "A crude camp with fire pits and bones.",
+        new Orc());
+    Room* orcStronghold = new Room("Orc Stronghold",
+        "The lair of the orc warlord.",
+        new Orc());
+    Room* lateShopRoom  = new Room("Abandoned Outpost",
+        "A crumbling outpost with a lone merchant.",
+        nullptr, lateShop);
+    Room* dragonPass    = new Room("Dragon's Pass",
+        "Scorch marks cover the walls.",
+        new Dragon());
+    Room* dragonLair    = new Room("Dragon's Lair",
         "Scorched walls and piles of gold.",
         new Dragon());
-    Room* throneRoom = new Room("Throne Room",
+    Room* throneRoom    = new Room("Throne Room",
         "The seat of the Fallen King. Darkness fills the air.",
         new FallenKing());
 
     start->setNPC("Elder Aldric", "Traveller, beware the forest. The Fallen King's shadow grows.");
-    ruins->setNPC("Ghost", "The king was not always evil. Something corrupted him...");
+    ruins1->setNPC("Ghost", "The king was not always evil. Something corrupted him...");
+    lateShopRoom->setNPC("Scout", "Beyond here lies the Dragon's Pass. Prepare yourself.");
 
-    start->addExit("north", forest);
+    start->addExit("north", forest1);
     start->addExit("east", clearing);
-    forest->addExit("south", start);
-    forest->addExit("north", ruins);
+    start->addExit("west", shadyAlley);
+    start->addExit("south", arcaneLibrary);
+
+    shadyAlley->addExit("east", start);
+
+    arcaneLibrary->addExit("north", start);
+
     clearing->addExit("west", start);
-    clearing->addExit("north", cave);
-    ruins->addExit("south", forest);
-    ruins->addExit("east", cave);
-    cave->addExit("south", clearing);
-    cave->addExit("west", ruins);
-    cave->addExit("north", midShopRoom);
-    midShopRoom->addExit("south", cave);
-    midShopRoom->addExit("north", dragonLair);
-    dragonLair->addExit("south", midShopRoom);
+    clearing->addExit("north", forest3);
+
+    forest1->addExit("south", start);
+    forest1->addExit("north", forest2);
+    forest1->addExit("east", forest4);
+
+    forest2->addExit("south", forest1);
+    forest2->addExit("north", ruins1);
+
+    forest3->addExit("south", clearing);
+    forest3->addExit("north", forest5);
+
+    forest4->addExit("west", forest1);
+    forest4->addExit("north", ruins2);
+
+    forest5->addExit("south", forest3);
+    forest5->addExit("east", ruins1);
+
+    ruins1->addExit("south", forest2);
+    ruins1->addExit("west", forest5);
+    ruins1->addExit("east", graveyard);
+
+    graveyard->addExit("west", ruins1);
+    graveyard->addExit("north", chapel);
+
+    chapel->addExit("south", graveyard);
+    chapel->addExit("east", ruins2);
+
+    ruins2->addExit("west", chapel);
+    ruins2->addExit("south", forest4);
+    ruins2->addExit("north", mountainPass);
+
+    mountainPass->addExit("south", ruins2);
+    mountainPass->addExit("north", midShopRoom);
+
+    midShopRoom->addExit("south", mountainPass);
+    midShopRoom->addExit("north", cave1);
+    midShopRoom->addExit("east", orcCamp);
+
+    cave1->addExit("south", midShopRoom);
+    cave1->addExit("north", orcStronghold);
+
+    orcCamp->addExit("west", midShopRoom);
+    orcCamp->addExit("north", orcStronghold);
+
+    orcStronghold->addExit("south", cave1);
+    orcStronghold->addExit("north", lateShopRoom);
+
+    lateShopRoom->addExit("south", orcStronghold);
+    lateShopRoom->addExit("north", dragonPass);
+
+    dragonPass->addExit("south", lateShopRoom);
+    dragonPass->addExit("north", dragonLair);
+
+    dragonLair->addExit("south", dragonPass);
     dragonLair->addExit("north", throneRoom);
+
     throneRoom->addExit("south", dragonLair);
 
     this->allRooms.push_back(start);
-    this->allRooms.push_back(forest);
+    this->allRooms.push_back(shadyAlley);
+    this->allRooms.push_back(arcaneLibrary);
+    this->allRooms.push_back(forest1);
     this->allRooms.push_back(clearing);
-    this->allRooms.push_back(ruins);
-    this->allRooms.push_back(cave);
+    this->allRooms.push_back(forest2);
+    this->allRooms.push_back(forest3);
+    this->allRooms.push_back(forest4);
+    this->allRooms.push_back(forest5);
+    this->allRooms.push_back(ruins1);
+    this->allRooms.push_back(graveyard);
+    this->allRooms.push_back(chapel);
+    this->allRooms.push_back(ruins2);
+    this->allRooms.push_back(mountainPass);
     this->allRooms.push_back(midShopRoom);
+    this->allRooms.push_back(cave1);
+    this->allRooms.push_back(orcCamp);
+    this->allRooms.push_back(orcStronghold);
+    this->allRooms.push_back(lateShopRoom);
+    this->allRooms.push_back(dragonPass);
     this->allRooms.push_back(dragonLair);
     this->allRooms.push_back(throneRoom);
 
@@ -349,6 +477,7 @@ void Game::combat(Room* room)
 
             int choice = 0;
             std::cin >> choice;
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
             if(choice == 1)
             {
@@ -359,8 +488,10 @@ void Game::combat(Room* room)
             {
                 this->player->showSkills();
                 std::cout << "Choose skill: ";
+
                 int skillChoice = 0;
                 std::cin >> skillChoice;
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
                 try
                 {
@@ -376,7 +507,18 @@ void Game::combat(Room* room)
 
             else if(choice == 3)
             {
-                this->handleInventory();
+                std::cout << "\n\033[1;33m═══ INVENTORY ═══\033[0m\n";
+                this->player->getInventory()->getDescription();
+                std::cout << "Choose item (0 to cancel): ";
+
+                int itemChoice = 0;
+                std::cin >> itemChoice;
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+                if(itemChoice != 0)
+                {
+                    this->player->getInventory()->useItem(itemChoice - 1, *this->player);
+                }
             }
 
             else if(choice == 4)
@@ -399,19 +541,19 @@ void Game::combat(Room* room)
             break;
         }
 
-        enemy->processEffects();
+        bool wasStunned = enemy->isStunned();  
+
+        enemy->processEffects();             
 
         if(!enemy->isAlive())
         {
             break;
         }
 
-        if(enemy->isStunned())
+        if(wasStunned)                       
         {
-            std::cout << "\033[1;33m" << enemy->getName()
-                      << " is stunned and cannot act!\033[0m\n";
-        }
 
+        }
         else
         {
             enemy->attack(*this->player);
