@@ -40,6 +40,8 @@ class Character : public Entity
 
         int getGold() const;
 
+        void setStats(int HP, int maxHP, int level, int XP, int gold, int ATK, int DEF, int MP);
+
         Inventory* getInventory() const;
 
         void initInventory();

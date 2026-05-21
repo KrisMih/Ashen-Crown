@@ -603,9 +603,13 @@ void Game::save(const std::string& filename)
     file << this->player->getClassName() << "\n";
     file << this->player->getName() << "\n";
     file << this->player->getHP() << "\n";
+    file << this->player->getMaxHP() << "\n";
     file << this->player->getLevel() << "\n";
     file << this->player->getXP() << "\n";
     file << this->player->getGold() << "\n";
+    file << this->player->getATK() << "\n";
+    file << this->player->getDEF() << "\n";
+    file << this->player->getMP() << "\n";
     file << this->currentRoom->getName() << "\n";
 
     file.close();
@@ -621,11 +625,11 @@ bool Game::load(const std::string& filename)
     }
 
     std::string className, name, roomName;
-    int HP, level, XP, gold;
+    int HP, maxHP, level, XP, gold, ATK, DEF, MP;
 
     std::getline(file, className);
     std::getline(file, name);
-    file >> HP >> level >> XP >> gold;
+    file >> HP >> maxHP >> level >> XP >> gold >> ATK >> DEF >> MP;
     file.ignore();
     std::getline(file, roomName);
 
@@ -635,7 +639,7 @@ bool Game::load(const std::string& filename)
     {
         this->player = new Warrior(name);
     }
-    
+
     else if(className == "Mage")
     {
         this->player = new Mage(name);
@@ -647,17 +651,16 @@ bool Game::load(const std::string& filename)
     }
 
     this->player->initInventory();
+    this->player->setStats(HP, maxHP, level, XP, gold, ATK, DEF, MP);
     this->buildWorld();
 
     for(int i = 0; i < this->allRooms.size(); i++)
     {
-
         if(this->allRooms[i]->getName() == roomName)
         {
             this->currentRoom = this->allRooms[i];
             break;
         }
-
     }
 
     std::cout << "Game loaded!\n";

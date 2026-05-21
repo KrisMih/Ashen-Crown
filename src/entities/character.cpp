@@ -40,6 +40,18 @@ int Character::getGold() const
     return this->gold;
 }
 
+void Character::setStats(int HP, int maxHP, int level, int XP, int gold, int ATK, int DEF, int MP)
+{
+    this->HP = HP;
+    this->maxHP = maxHP;
+    this->level = level;
+    this->XP = XP;
+    this->gold = gold;
+    this->ATK = ATK;
+    this->DEF = DEF;
+    this->MP = MP;
+}
+
 Inventory * Character::getInventory() const
 {
     return this->inventory;
