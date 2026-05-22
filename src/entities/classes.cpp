@@ -5,7 +5,7 @@
 #include <algorithm>
 
 Warrior::Warrior(const std::string& name)
-    : Character(name, 120, 15, 10, 20), rage(0)
+    : Character(name, 120, 15, 10, 20, 20), rage(0)
 {
 
 }
@@ -26,7 +26,8 @@ void Warrior::levelUp()
         this->HP = this->maxHP;
         this->ATK += 5;
         this->DEF += 4;
-        this->MP += 5;
+        this->maxMP += 5;
+        this->MP = this->maxMP;
         std::cout << "\033[1;33m★ LEVEL UP! You are now level " << this->level << "! ★\033[0m\n";
         std::cout << "  HP max +" << 20 << " | ATK +" << 5 << " | DEF +" << 4 << " | MP +" << 5 << "\n";
     }
@@ -128,7 +129,7 @@ void Warrior::berserker(Enemy& target)
 }
 
 Mage::Mage(const std::string& name)
-    : Character(name, 80, 8, 5, 80), spellPower(20)
+    : Character(name, 80, 8, 5, 80, 80), spellPower(20)
 {
 
 }
@@ -149,7 +150,8 @@ void Mage::levelUp()
         this->HP = this->maxHP;
         this->ATK += 2;
         this->DEF += 2;
-        this->MP += 20;
+        this->maxMP += 20;
+        this->MP = this->maxMP;
         this->spellPower += 5;
         std::cout << "\033[1;33m★ LEVEL UP! You are now level " << this->level << "! ★\033[0m\n";
         std::cout << "  HP max +" << 10 << " | ATK +" << 2 << " | DEF +" << 2 << " | MP +" << 20 << " | Spell Power +" << 5 << "\n";
@@ -267,7 +269,7 @@ void Mage::thunderstorm(Enemy& target)
 }
 
 Rogue::Rogue(const std::string& name)
-    : Character(name, 90, 12, 7, 50), critChance(0.25f), stealth(false)
+    : Character(name, 90, 12, 7, 50, 50), critChance(0.25f), stealth(false)
 {
 
 }
@@ -288,7 +290,8 @@ void Rogue::levelUp()
         this->HP = this->maxHP;
         this->ATK += 4;
         this->DEF += 3;
-        this->MP += 10;
+        this->maxMP += 10;
+        this->MP = this->maxMP;
         this->critChance += 0.05f;
         std::cout << "\033[1;33m★ LEVEL UP! You are now level " << this->level << "! ★\033[0m\n";
         std::cout << "  HP max +" << 15 << " | ATK +" << 4 << " | DEF +" << 3 << " | MP +" << 10 << "\n";

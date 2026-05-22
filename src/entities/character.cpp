@@ -4,8 +4,8 @@
 #include "../items/item.h"
 #include "../items/statuseffects.h"
 
-Character::Character(const std::string& name, int HP, int ATK, int DEF, int MP)
-    :Entity(name, HP), ATK(ATK), DEF(DEF), MP(MP), level(1), gold(0), XP(0), inventory(nullptr), equippedWeapon(nullptr), equippedArmor(nullptr)
+Character::Character(const std::string& name, int HP, int ATK, int DEF, int MP, int maxMP)
+    :Entity(name, HP), ATK(ATK), DEF(DEF), MP(MP), level(1), gold(0), XP(0), inventory(nullptr), equippedWeapon(nullptr), equippedArmor(nullptr), maxMP(maxMP)
 {
 
 }

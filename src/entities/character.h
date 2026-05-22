@@ -17,6 +17,7 @@ class Character : public Entity
         int ATK;
         int DEF;
         int MP;
+        int maxMP;
         int gold;
 
     private:
@@ -26,7 +27,7 @@ class Character : public Entity
         std::vector<StatusEffect*> effects;
 
     public:
-        Character(const std::string& name, int HP, int ATK, int DEF,int MP);
+        Character(const std::string& name, int HP, int ATK, int DEF,int MP, int maxMP);
 
         int getLevel() const;
 
