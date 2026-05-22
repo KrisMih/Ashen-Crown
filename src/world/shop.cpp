@@ -15,6 +15,27 @@ void Shop::addItem(Item* item)
     this->stock.push_back(item);
 }
 
+int Shop::getStockSize() const
+{
+    return this->stock.size();
+}
+
+Item* Shop::getStockItem(int index) const
+{
+    return this->stock[index];
+}
+
+void Shop::clearStock()
+{
+    
+    for(int i = 0; i < this->stock.size(); i++)
+    {
+        delete this->stock[i];
+    }
+
+    this->stock.clear();
+}
+
 void Shop::display() const
 {
     std::cout << "\n\033[1;33m═══ " << this->shopName << " ═══\033[0m\n";

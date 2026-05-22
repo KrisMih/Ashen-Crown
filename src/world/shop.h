@@ -16,6 +16,12 @@ class Shop
 
         void addItem(Item* item);
 
+        int getStockSize() const;
+
+        Item* getStockItem(int index) const;
+        
+        void clearStock();
+
         void buy(int index, Character& buyer);
 
         void sell(int inventoryIndex, Character& seller);

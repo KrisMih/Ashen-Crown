@@ -23,6 +23,8 @@ class Item
 
         virtual void getDescription() const;
 
+        virtual std::string getType() const = 0;
+
         virtual ~Item() = default;
 };
 
@@ -60,6 +62,8 @@ class Sword : public Weapon
         void use(Character& target) override;
 
         void getDescription() const override;
+
+        std::string getType() const override;
 };
 
 class Staff : public Weapon
@@ -70,6 +74,8 @@ class Staff : public Weapon
         void use(Character& target) override;
 
         void getDescription() const override;
+
+        std::string getType() const override;
 };
 
 class Dagger : public Weapon
@@ -78,7 +84,10 @@ class Dagger : public Weapon
         Dagger(const std::string& name, int value, bool tradeable,int ATKBonus);
 
         void use(Character& target) override;
+
         void getDescription() const override;
+
+        std::string getType() const override;
 };
 
 class Armor : public Item
@@ -109,6 +118,8 @@ class LightArmor : public Armor
         void use(Character& target) override;
 
         void getDescription() const override;
+
+        std::string getType() const override;
 };
 
 class MediumArmor : public Armor
@@ -119,6 +130,8 @@ class MediumArmor : public Armor
             void use(Character& target) override;
 
             void getDescription() const override;
+
+            std::string getType() const override;
 };
 
 class HeavyArmor : public Armor
@@ -129,6 +142,8 @@ class HeavyArmor : public Armor
         void use(Character& target) override;
 
         void getDescription() const override;
+
+        std::string getType() const override;
 };
 
 class Potion : public Item
@@ -144,4 +159,6 @@ class Potion : public Item
         void getDescription() const override;
 
         int getHealAmount() const;
+
+        std::string getType() const override;
 };

@@ -11,9 +11,9 @@
 
 
 Game::Game()
-    : player(nullptr), currentRoom(nullptr), running(false)
+    :player(nullptr), currentRoom(nullptr), running(false)
 {
-
+    system("mkdir -p saves");
 }
 
 Game::~Game()
@@ -110,6 +110,17 @@ void Game::buildWorld()
     Room* orcStronghold = new Room("Orc Stronghold",
         "The lair of the orc warlord.",
         new Orc());
+    Room* ancientBridge  = new Room("Ancient Bridge",
+    "A crumbling bridge over a chasm. Wind howls below.");
+    Room* ashWastes      = new Room("Ash Wastes",
+        "A desolate plain covered in ash and charred bones.",
+        new Orc());
+    Room* burnedVillage  = new Room("Burned Village",
+        "The remains of a village razed by dragon fire.",
+        new Orc());
+    Room* dragonShroud   = new Room("Dragon's Shroud",
+        "Thick smoke fills the air. The dragons are near.",
+        new Dragon());
     Room* lateShopRoom  = new Room("Abandoned Outpost",
         "A crumbling outpost with a lone merchant.",
         nullptr, lateShop);
@@ -183,12 +194,24 @@ void Game::buildWorld()
     orcCamp->addExit("north", orcStronghold);
 
     orcStronghold->addExit("south", cave1);
-    orcStronghold->addExit("north", lateShopRoom);
+    orcStronghold->addExit("north", ancientBridge);
 
-    lateShopRoom->addExit("south", orcStronghold);
-    lateShopRoom->addExit("north", dragonPass);
+    ancientBridge->addExit("south", orcStronghold);
+    ancientBridge->addExit("north", ashWastes);
 
-    dragonPass->addExit("south", lateShopRoom);
+    ashWastes->addExit("south", ancientBridge);
+    ashWastes->addExit("east", burnedVillage);
+
+    burnedVillage->addExit("west", ashWastes);
+    burnedVillage->addExit("north", lateShopRoom);
+
+    lateShopRoom->addExit("south", burnedVillage);
+    lateShopRoom->addExit("north", dragonShroud);
+
+    dragonShroud->addExit("south", lateShopRoom);
+    dragonShroud->addExit("north", dragonPass);
+
+    dragonPass->addExit("south", dragonShroud);
     dragonPass->addExit("north", dragonLair);
 
     dragonLair->addExit("south", dragonPass);
@@ -218,8 +241,20 @@ void Game::buildWorld()
     this->allRooms.push_back(dragonPass);
     this->allRooms.push_back(dragonLair);
     this->allRooms.push_back(throneRoom);
+    this->allRooms.push_back(ancientBridge);
+    this->allRooms.push_back(ashWastes);
+    this->allRooms.push_back(burnedVillage);
+    this->allRooms.push_back(dragonShroud);
+
+    this->allShops.push_back(startShop);
+    this->allShops.push_back(rogueShop);
+    this->allShops.push_back(mageShop);
+    this->allShops.push_back(midShop);
+    this->allShops.push_back(lateShop);
 
     this->currentRoom = start;
+
+    this->clearedRooms.resize(this->allRooms.size(), false);
 }
 
 void Game::start()
@@ -275,13 +310,18 @@ void Game::start()
 
     else if(choice == 2)
     {
+        this->showSaveSlots();
+        std::cout << "Choose slot (1-3): ";
+        int slot = 0;
+        std::cin >> slot;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-        if(!this->load())
+        if(!this->load(slot))
         {
-            std::cout << "No save file found!\n";
+            std::cout << "No save found in slot " << slot << "!\n";
             this->start();
         }
-        
+
         else
         {
             this->run();
@@ -388,8 +428,12 @@ void Game::processCommand(const std::string& cmd)
 
     else if(cmd == "save")
     {
-        this->save();
-        std::cout << "Game saved!\n";
+        this->showSaveSlots();
+        std::cout << "Choose slot (1-3): ";
+        int slot = 0;
+        std::cin >> slot;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        this->save(slot);
     }
 
     else if(cmd == "quit")
@@ -586,13 +630,60 @@ void Game::combat(Room* room)
 
         this->player->levelUp();
         room->clearEnemy();
+
+        for(int i = 0; i < this->allRooms.size(); i++)
+        {
+
+            if(this->allRooms[i] == room)
+            {
+                this->clearedRooms[i] = true;
+                break;
+            }
+
+        }
+
     }
 
 }
 
-void Game::save(const std::string& filename)
+std::string Game::getSavePath(int slot) const
 {
-    std::ofstream file(filename);
+    return "saves/save" + std::to_string(slot) + ".txt";
+}
+
+void Game::showSaveSlots() const
+{
+    std::cout << "\n\033[1;33m═══ SAVE SLOTS ═══\033[0m\n";
+
+    for(int i = 1; i <= 3; i++)
+    {
+        std::ifstream file(this->getSavePath(i));
+
+        if(!file.is_open())
+        {
+            std::cout << "  " << i << ". [Empty]\n";
+            continue;
+        }
+
+        std::string className, name;
+        int HP, maxHP, level;
+
+        std::getline(file, className);
+        std::getline(file, name);
+        file >> HP >> maxHP >> level;
+        file.close();
+
+        std::cout << "  " << i << ". " << name
+                  << " [" << className << "] "
+                  << "Lv." << level
+                  << " HP: " << HP << "/" << maxHP << "\n";
+    }
+
+}
+
+void Game::save(int slot)
+{
+    std::ofstream file(this->getSavePath(slot));
 
     if(!file.is_open())
     {
@@ -602,22 +693,75 @@ void Game::save(const std::string& filename)
 
     file << this->player->getClassName() << "\n";
     file << this->player->getName() << "\n";
-    file << this->player->getHP() << "\n";
-    file << this->player->getMaxHP() << "\n";
-    file << this->player->getLevel() << "\n";
-    file << this->player->getXP() << "\n";
-    file << this->player->getGold() << "\n";
-    file << this->player->getATK() << "\n";
-    file << this->player->getDEF() << "\n";
-    file << this->player->getMP() << "\n";
+    file << this->player->getHP() << " "
+         << this->player->getMaxHP() << " "
+         << this->player->getLevel() << " "
+         << this->player->getXP() << " "
+         << this->player->getGold() << " "
+         << this->player->getATK() << " "
+         << this->player->getDEF() << " "
+         << this->player->getMP() << "\n";
+
     file << this->currentRoom->getName() << "\n";
 
+    for(int i = 0; i < this->clearedRooms.size(); i++)
+    {
+        file << (this->clearedRooms[i] ? 1 : 0);
+
+        if(i < this->clearedRooms.size() - 1)
+        {
+            file << " ";
+        }
+
+    }
+
+    file << "\n";
+
+    if(this->player->getEquippedWeapon() != nullptr)
+    {
+        Item* w = this->player->getEquippedWeapon();
+        file << "EQUIPPED_WEAPON|" << w->getType() << "|" << w->getName() << "|" << w->getValue() << "\n";
+    }
+
+    if(this->player->getEquippedArmor() != nullptr)
+    {
+        Item* a = this->player->getEquippedArmor();
+        file << "EQUIPPED_ARMOR|" << a->getType() << "|" << a->getName() << "|" << a->getValue() << "\n";
+    }
+
+    Inventory* inv = this->player->getInventory();
+
+    for(int i = 0; i < inv->getSize(); i++)
+    {
+        Item* item = inv->getItem(i);
+        file << "ITEM|" << item->getType() << "|" << item->getName() << "|" << item->getValue() << "\n";
+    }
+
+    file << "END\n";
+
+file << "SHOPS\n";
+
+    for(int i = 0; i < this->allShops.size(); i++)
+    {
+        file << "SHOP_START\n";
+
+        for(int j = 0; j < this->allShops[i]->getStockSize(); j++)
+        {
+            Item* item = this->allShops[i]->getStockItem(j);
+            file << item->getType() << "|" << item->getName() << "|" << item->getValue() << "\n";
+        }
+
+        file << "SHOP_END\n";
+    }
+
     file.close();
+
+    std::cout << "\033[1;32mGame saved to slot " << slot << "!\033[0m\n";
 }
 
-bool Game::load(const std::string& filename)
+bool Game::load(int slot)
 {
-    std::ifstream file(filename);
+    std::ifstream file(this->getSavePath(slot));
 
     if(!file.is_open())
     {
@@ -632,6 +776,31 @@ bool Game::load(const std::string& filename)
     file >> HP >> maxHP >> level >> XP >> gold >> ATK >> DEF >> MP;
     file.ignore();
     std::getline(file, roomName);
+
+    std::vector<bool> cleared;
+    std::string clearedLine;
+    std::getline(file, clearedLine);
+    std::istringstream ss(clearedLine);
+    int val;
+
+    while(ss >> val)
+    {
+        cleared.push_back(val == 1);
+    }
+
+    std::vector<std::string> allLines;
+    std::string line;
+
+    while(std::getline(file, line))
+    {
+
+        if(line == "END")
+        {
+            break;
+        }
+
+        allLines.push_back(line);
+    }
 
     file.close();
 
@@ -654,15 +823,177 @@ bool Game::load(const std::string& filename)
     this->player->setStats(HP, maxHP, level, XP, gold, ATK, DEF, MP);
     this->buildWorld();
 
+    this->clearedRooms = cleared;
+
     for(int i = 0; i < this->allRooms.size(); i++)
     {
+
+        if(i < this->clearedRooms.size() && this->clearedRooms[i])
+        {
+            this->allRooms[i]->clearEnemy();
+        }
+
         if(this->allRooms[i]->getName() == roomName)
         {
             this->currentRoom = this->allRooms[i];
-            break;
+        }
+
+    }
+
+    std::string equippedWeaponName = "NONE";
+    std::string equippedArmorName  = "NONE";
+
+    for(int i = 0; i < allLines.size(); i++)
+    {
+        std::istringstream lineStream(allLines[i]);
+        std::string tag, type, itemName;
+        int itemValue;
+
+        std::getline(lineStream, tag, '|');
+        std::getline(lineStream, type, '|');
+        std::getline(lineStream, itemName, '|');
+        lineStream >> itemValue;
+
+        Item* newItem = nullptr;
+
+        if(type == "Potion")
+        {
+            newItem = new Potion(itemName, itemValue, 30);
+        }
+
+        else if(type == "Sword")
+        {
+            newItem = new Sword(itemName, itemValue, true, 10, 3);
+        }
+
+        else if(type == "Staff")
+        {
+            newItem = new Staff(itemName, itemValue, true, 15);
+        }
+
+        else if(type == "Dagger")
+        {
+            newItem = new Dagger(itemName, itemValue, true, 10);
+        }
+
+        else if(type == "LightArmor")
+        {
+            newItem = new LightArmor(itemName, itemValue, true, 6);
+        }
+
+        else if(type == "MediumArmor")
+        {
+            newItem = new MediumArmor(itemName, itemValue, true, 8);
+        }
+
+        else if(type == "HeavyArmor")
+        {
+            newItem = new HeavyArmor(itemName, itemValue, true, 10);
+        }
+
+        if(newItem == nullptr)
+        {
+            continue;
+        }
+
+        if(tag == "EQUIPPED_WEAPON")
+        {
+            Weapon* w = dynamic_cast<Weapon*>(newItem);
+
+            if(w != nullptr)
+            {
+                this->player->equipWeapon(w);
+            }
+
+        }
+
+        else if(tag == "EQUIPPED_ARMOR")
+        {
+            Armor* a = dynamic_cast<Armor*>(newItem);
+
+            if(a != nullptr)
+            {
+                this->player->equipArmor(a);
+            }
+
+        }
+
+        else if(tag == "ITEM")
+        {
+            this->player->getInventory()->addItem(newItem);
+        }
+
+    }
+
+    if(std::getline(file, line) && line == "SHOPS")
+    {
+        int shopIndex = 0;
+
+        while(std::getline(file, line) && shopIndex < this->allShops.size())
+        {
+            if(line == "SHOP_START")
+            {
+                this->allShops[shopIndex]->clearStock();
+
+                while(std::getline(file, line) && line != "SHOP_END")
+                {
+                    std::istringstream ls(line);
+                    std::string type, itemName;
+                    int itemValue;
+
+                    std::getline(ls, type, '|');
+                    std::getline(ls, itemName, '|');
+                    ls >> itemValue;
+
+                    Item* newItem = nullptr;
+
+                    if(type == "Potion")
+                    {
+                        newItem = new Potion(itemName, itemValue, 30);
+                    }
+
+                    else if(type == "Sword")
+                    {
+                        newItem = new Sword(itemName, itemValue, true, 10, 3);
+                    }
+
+                    else if(type == "Staff")
+                    {
+                        newItem = new Staff(itemName, itemValue, true, 15);
+                    }
+
+                    else if(type == "Dagger")
+                    {
+                        newItem = new Dagger(itemName, itemValue, true, 10);
+                    }
+
+                    else if(type == "LightArmor")
+                    {
+                        newItem = new LightArmor(itemName, itemValue, true, 6);
+                    }
+
+                    else if(type == "MediumArmor")
+                    {
+                        newItem = new MediumArmor(itemName, itemValue, true, 8);
+                    }
+
+                    else if(type == "HeavyArmor")
+                    {
+                        newItem = new HeavyArmor(itemName, itemValue, true, 10);
+                    }
+
+                    if(newItem != nullptr)
+                    {
+                        this->allShops[shopIndex]->addItem(newItem);
+                    }
+                    
+                }
+
+                shopIndex++;
+            }
         }
     }
 
-    std::cout << "Game loaded!\n";
+    std::cout << "\033[1;32mGame loaded from slot " << slot << "!\033[0m\n";
     return true;
 }

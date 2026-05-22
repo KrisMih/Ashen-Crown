@@ -40,6 +40,16 @@ int Character::getGold() const
     return this->gold;
 }
 
+Weapon * Character::getEquippedWeapon() const
+{
+    return this->equippedWeapon;
+}
+
+Armor * Character::getEquippedArmor() const
+{
+    return this->equippedArmor;
+}
+
 void Character::setStats(int HP, int maxHP, int level, int XP, int gold, int ATK, int DEF, int MP)
 {
     this->HP = HP;
@@ -95,23 +105,65 @@ void Character::levelUp()
 
 }
 
-void Character::equipWeapon(Weapon * weapon)
+void Character::equipWeapon(Weapon* weapon)
 {
+
+    if(this->equippedWeapon != nullptr)
+    {
+        this->ATK -= this->equippedWeapon->getATKbonus();
+        this->DEF -= this->equippedWeapon->getDEFbonus();
+        this->MP  -= this->equippedWeapon->getMPbonus();
+    }
+
     this->equippedWeapon = weapon;
+
+    if(weapon != nullptr)
+    {
+        this->ATK += weapon->getATKbonus();
+        this->DEF += weapon->getDEFbonus();
+        this->MP  += weapon->getMPbonus();
+    }
+    
 }
 
 void Character::unequipWeapon()
 {
+
+    if(this->equippedWeapon != nullptr)
+    {
+        this->ATK -= this->equippedWeapon->getATKbonus();
+        this->DEF -= this->equippedWeapon->getDEFbonus();
+        this->MP  -= this->equippedWeapon->getMPbonus();
+    }
+
     this->equippedWeapon = nullptr;
 }
 
-void Character::equipArmor(Armor * armor)
+void Character::equipArmor(Armor* armor)
 {
+
+    if(this->equippedArmor != nullptr)
+    {
+        this->DEF -= this->equippedArmor->getDEFbonus();
+    }
+
     this->equippedArmor = armor;
+
+    if(armor != nullptr)
+    {
+        this->DEF += armor->getDEFbonus();
+    }
+
 }
 
 void Character::unequipArmor()
 {
+
+    if(this->equippedArmor != nullptr)
+    {
+        this->DEF -= this->equippedArmor->getDEFbonus();
+    }
+
     this->equippedArmor = nullptr;
 }
 

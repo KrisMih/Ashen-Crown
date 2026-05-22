@@ -81,6 +81,11 @@ void Sword::getDescription() const
               << "] - " << this->value << "g | Class: Warrior\n";
 }
 
+std::string Sword::getType() const
+{
+    return "Sword";
+}
+
 Staff::Staff(const std::string& name, int value, bool tradeable, int MPbonus)
     : Weapon(name, value, tradeable, 0, MPbonus, 0, "Mage")
 {
@@ -107,6 +112,11 @@ void Staff::getDescription() const
               << "] - " << this->value << "g | Class: Mage\n";
 }
 
+std::string Staff::getType() const
+{
+    return "Staff";
+}
+
 Dagger::Dagger(const std::string& name, int value, bool tradeable, int ATKbonus)
     : Weapon(name, value, tradeable, ATKbonus, 0, 0, "Rogue")
 {
@@ -131,6 +141,11 @@ void Dagger::getDescription() const
     std::cout << this->name
               << " [ATK +" << this->ATKbonus
               << "] - " << this->value << "g | Class: Rogue\n";
+}
+
+std::string Dagger::getType() const
+{
+    return "Dagger";
 }
 
 Armor::Armor(const std::string& name, int value, bool tradeable, int DEFbonus, const std::string& allowedClass)
@@ -174,6 +189,11 @@ void LightArmor::getDescription() const
               << "] - " << this->value << "g | Class: Mage\n";
 }
 
+std::string LightArmor::getType() const
+{
+    return "LightArmor";
+}
+
 MediumArmor::MediumArmor(const std::string& name, int value, bool tradeable, int DEFbonus)
     : Armor(name, value, tradeable, DEFbonus, "Rogue")
 {
@@ -198,6 +218,11 @@ void MediumArmor::getDescription() const
     std::cout << this->name
               << " [DEF +" << this->DEFbonus
               << "] - " << this->value << "g | Class: Rogue\n";
+}
+
+std::string MediumArmor::getType() const
+{
+    return "MediumArmor";
 }
 
 HeavyArmor::HeavyArmor(const std::string& name, int value, bool tradeable, int DEFbonus)
@@ -226,6 +251,11 @@ void HeavyArmor::getDescription() const
               << "] - " << this->value << "g | Class: Warrior\n";
 }
 
+std::string HeavyArmor::getType() const
+{
+    return "HeavyArmor";
+}
+
 Potion::Potion(const std::string& name, int value, int healAmount)
     : Item(name, value, true), healAmount(healAmount)
 {
@@ -244,6 +274,11 @@ void Potion::getDescription() const
     std::cout << this->name
               << " [+" << this->healAmount << " HP]"
               << " - " << this->value << "g\n";
+}
+
+std::string Potion::getType() const
+{
+    return "Potion";
 }
 
 int Potion::getHealAmount() const
