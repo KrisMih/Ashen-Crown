@@ -738,8 +738,7 @@ void Game::save(int slot)
     }
 
     file << "END\n";
-
-file << "SHOPS\n";
+    file << "SHOPS\n";
 
     for(int i = 0; i < this->allShops.size(); i++)
     {
@@ -788,18 +787,42 @@ bool Game::load(int slot)
         cleared.push_back(val == 1);
     }
 
-    std::vector<std::string> allLines;
+    std::vector<std::string> itemLines;
     std::string line;
 
     while(std::getline(file, line))
     {
-
+        
         if(line == "END")
         {
             break;
         }
 
-        allLines.push_back(line);
+        itemLines.push_back(line);
+    }
+
+    std::vector<std::vector<std::string>> shopData;
+
+    if(std::getline(file, line) && line == "SHOPS")
+    {
+
+        while(std::getline(file, line))
+        {
+
+            if(line == "SHOP_START")
+            {
+                std::vector<std::string> shopItems;
+
+                while(std::getline(file, line) && line != "SHOP_END")
+                {
+                    shopItems.push_back(line);
+                }
+
+                shopData.push_back(shopItems);
+            }
+
+        }
+
     }
 
     file.close();
@@ -822,7 +845,6 @@ bool Game::load(int slot)
     this->player->initInventory();
     this->player->setStats(HP, maxHP, level, XP, gold, ATK, DEF, MP);
     this->buildWorld();
-
     this->clearedRooms = cleared;
 
     for(int i = 0; i < this->allRooms.size(); i++)
@@ -840,12 +862,9 @@ bool Game::load(int slot)
 
     }
 
-    std::string equippedWeaponName = "NONE";
-    std::string equippedArmorName  = "NONE";
-
-    for(int i = 0; i < allLines.size(); i++)
+    for(int i = 0; i < itemLines.size(); i++)
     {
-        std::istringstream lineStream(allLines[i]);
+        std::istringstream lineStream(itemLines[i]);
         std::string tag, type, itemName;
         int itemValue;
 
@@ -856,39 +875,39 @@ bool Game::load(int slot)
 
         Item* newItem = nullptr;
 
-        if(type == "Potion")
-        {
-            newItem = new Potion(itemName, itemValue, 30);
+        if(type == "Potion")           
+        { 
+            newItem = new Potion(itemName, itemValue, 30); 
         }
 
-        else if(type == "Sword")
-        {
-            newItem = new Sword(itemName, itemValue, true, 10, 3);
+        else if(type == "Sword")       
+        { 
+            newItem = new Sword(itemName, itemValue, true, 10, 3); 
         }
-
-        else if(type == "Staff")
-        {
-            newItem = new Staff(itemName, itemValue, true, 15);
+        
+        else if(type == "Staff")       
+        { 
+            newItem = new Staff(itemName, itemValue, true, 15); 
         }
-
-        else if(type == "Dagger")
-        {
-            newItem = new Dagger(itemName, itemValue, true, 10);
+        
+        else if(type == "Dagger")      
+        { 
+            newItem = new Dagger(itemName, itemValue, true, 10); 
         }
-
-        else if(type == "LightArmor")
-        {
-            newItem = new LightArmor(itemName, itemValue, true, 6);
+        
+        else if(type == "LightArmor")  
+        { 
+            newItem = new LightArmor(itemName, itemValue, true, 6); 
         }
-
-        else if(type == "MediumArmor")
-        {
-            newItem = new MediumArmor(itemName, itemValue, true, 8);
+        
+        else if(type == "MediumArmor") 
+        { 
+            newItem = new MediumArmor(itemName, itemValue, true, 8); 
         }
-
-        else if(type == "HeavyArmor")
-        {
-            newItem = new HeavyArmor(itemName, itemValue, true, 10);
+        
+        else if(type == "HeavyArmor")  
+        { 
+            newItem = new HeavyArmor(itemName, itemValue, true, 10); 
         }
 
         if(newItem == nullptr)
@@ -925,72 +944,62 @@ bool Game::load(int slot)
 
     }
 
-    if(std::getline(file, line) && line == "SHOPS")
+    for(int i = 0; i < shopData.size() && i < this->allShops.size(); i++)
     {
-        int shopIndex = 0;
+        this->allShops[i]->clearStock();
 
-        while(std::getline(file, line) && shopIndex < this->allShops.size())
+        for(int j = 0; j < shopData[i].size(); j++)
         {
-            if(line == "SHOP_START")
-            {
-                this->allShops[shopIndex]->clearStock();
+            std::istringstream ls(shopData[i][j]);
+            std::string type, itemName;
+            int itemValue;
 
-                while(std::getline(file, line) && line != "SHOP_END")
-                {
-                    std::istringstream ls(line);
-                    std::string type, itemName;
-                    int itemValue;
+            std::getline(ls, type, '|');
+            std::getline(ls, itemName, '|');
+            ls >> itemValue;
 
-                    std::getline(ls, type, '|');
-                    std::getline(ls, itemName, '|');
-                    ls >> itemValue;
+            Item* newItem = nullptr;
 
-                    Item* newItem = nullptr;
-
-                    if(type == "Potion")
-                    {
-                        newItem = new Potion(itemName, itemValue, 30);
-                    }
-
-                    else if(type == "Sword")
-                    {
-                        newItem = new Sword(itemName, itemValue, true, 10, 3);
-                    }
-
-                    else if(type == "Staff")
-                    {
-                        newItem = new Staff(itemName, itemValue, true, 15);
-                    }
-
-                    else if(type == "Dagger")
-                    {
-                        newItem = new Dagger(itemName, itemValue, true, 10);
-                    }
-
-                    else if(type == "LightArmor")
-                    {
-                        newItem = new LightArmor(itemName, itemValue, true, 6);
-                    }
-
-                    else if(type == "MediumArmor")
-                    {
-                        newItem = new MediumArmor(itemName, itemValue, true, 8);
-                    }
-
-                    else if(type == "HeavyArmor")
-                    {
-                        newItem = new HeavyArmor(itemName, itemValue, true, 10);
-                    }
-
-                    if(newItem != nullptr)
-                    {
-                        this->allShops[shopIndex]->addItem(newItem);
-                    }
-                    
-                }
-
-                shopIndex++;
+            if(type == "Potion")           
+            { 
+                newItem = new Potion(itemName, itemValue, 30); 
             }
+
+            else if(type == "Sword")       
+            { 
+                newItem = new Sword(itemName, itemValue, true, 10, 3); 
+            }
+
+            else if(type == "Staff")       
+            { 
+                newItem = new Staff(itemName, itemValue, true, 15); 
+            }
+            
+            else if(type == "Dagger")      
+            { 
+                newItem = new Dagger(itemName, itemValue, true, 10); 
+            }
+            
+            else if(type == "LightArmor")  
+            { 
+                newItem = new LightArmor(itemName, itemValue, true, 6); 
+            }
+            
+            else if(type == "MediumArmor") 
+            { 
+                newItem = new MediumArmor(itemName, itemValue, true, 8); 
+            }
+            
+            else if(type == "HeavyArmor")  
+            { 
+                newItem = new HeavyArmor(itemName, itemValue, true, 10); 
+            }
+
+            if(newItem != nullptr)
+            {
+                this->allShops[i]->addItem(newItem);
+            }
+
         }
     }
 
