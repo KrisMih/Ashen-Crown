@@ -700,7 +700,8 @@ void Game::save(int slot)
          << this->player->getGold() << " "
          << this->player->getATK() << " "
          << this->player->getDEF() << " "
-         << this->player->getMP() << "\n";
+         << this->player->getMP() << " "
+         << this->player->getMaxMP() << "\n";
 
     file << this->currentRoom->getName() << "\n";
 
@@ -712,7 +713,7 @@ void Game::save(int slot)
         {
             file << " ";
         }
-
+        
     }
 
     file << "\n";
@@ -720,13 +721,15 @@ void Game::save(int slot)
     if(this->player->getEquippedWeapon() != nullptr)
     {
         Item* w = this->player->getEquippedWeapon();
-        file << "EQUIPPED_WEAPON|" << w->getType() << "|" << w->getName() << "|" << w->getValue() << "\n";
+        Potion* p = dynamic_cast<Potion*>(w);
+        int extra = (p != nullptr) ? p->getHealAmount() : 0;
+        file << "EQUIPPED_WEAPON|" << w->getType() << "|" << w->getName() << "|" << w->getValue() << "|" << extra << "\n";
     }
 
     if(this->player->getEquippedArmor() != nullptr)
     {
         Item* a = this->player->getEquippedArmor();
-        file << "EQUIPPED_ARMOR|" << a->getType() << "|" << a->getName() << "|" << a->getValue() << "\n";
+        file << "EQUIPPED_ARMOR|" << a->getType() << "|" << a->getName() << "|" << a->getValue() << "|0\n";
     }
 
     Inventory* inv = this->player->getInventory();
@@ -734,7 +737,18 @@ void Game::save(int slot)
     for(int i = 0; i < inv->getSize(); i++)
     {
         Item* item = inv->getItem(i);
-        file << "ITEM|" << item->getType() << "|" << item->getName() << "|" << item->getValue() << "\n";
+        Potion* potion = dynamic_cast<Potion*>(item);
+
+        if(potion != nullptr)
+        {
+            file << "ITEM|" << item->getType() << "|" << item->getName() << "|" << item->getValue() << "|" << potion->getHealAmount() << "\n";
+        }
+
+        else
+        {
+            file << "ITEM|" << item->getType() << "|" << item->getName() << "|" << item->getValue() << "|0\n";
+        }
+
     }
 
     file << "END\n";
@@ -747,7 +761,18 @@ void Game::save(int slot)
         for(int j = 0; j < this->allShops[i]->getStockSize(); j++)
         {
             Item* item = this->allShops[i]->getStockItem(j);
-            file << item->getType() << "|" << item->getName() << "|" << item->getValue() << "\n";
+            Potion* potion = dynamic_cast<Potion*>(item);
+
+            if(potion != nullptr)
+            {
+                file << item->getType() << "|" << item->getName() << "|" << item->getValue() << "|" << potion->getHealAmount() << "\n";
+            }
+
+            else
+            {
+                file << item->getType() << "|" << item->getName() << "|" << item->getValue() << "|0\n";
+            }
+
         }
 
         file << "SHOP_END\n";
@@ -768,11 +793,11 @@ bool Game::load(int slot)
     }
 
     std::string className, name, roomName;
-    int HP, maxHP, level, XP, gold, ATK, DEF, MP;
+    int HP, maxHP, level, XP, gold, ATK, DEF, MP, maxMP;
 
     std::getline(file, className);
     std::getline(file, name);
-    file >> HP >> maxHP >> level >> XP >> gold >> ATK >> DEF >> MP;
+    file >> HP >> maxHP >> level >> XP >> gold >> ATK >> DEF >> MP >> maxMP;
     file.ignore();
     std::getline(file, roomName);
 
@@ -792,7 +817,7 @@ bool Game::load(int slot)
 
     while(std::getline(file, line))
     {
-        
+
         if(line == "END")
         {
             break;
@@ -808,7 +833,6 @@ bool Game::load(int slot)
 
         while(std::getline(file, line))
         {
-
             if(line == "SHOP_START")
             {
                 std::vector<std::string> shopItems;
@@ -843,7 +867,7 @@ bool Game::load(int slot)
     }
 
     this->player->initInventory();
-    this->player->setStats(HP, maxHP, level, XP, gold, ATK, DEF, MP);
+    this->player->setStats(HP, maxHP, level, XP, gold, ATK, DEF, MP, maxMP);
     this->buildWorld();
     this->clearedRooms = cleared;
 
@@ -866,48 +890,49 @@ bool Game::load(int slot)
     {
         std::istringstream lineStream(itemLines[i]);
         std::string tag, type, itemName;
-        int itemValue;
+        int itemValue, extraStat;
+        char pipe;
 
         std::getline(lineStream, tag, '|');
         std::getline(lineStream, type, '|');
         std::getline(lineStream, itemName, '|');
-        lineStream >> itemValue;
+        lineStream >> itemValue >> pipe >> extraStat;
 
         Item* newItem = nullptr;
 
-        if(type == "Potion")           
-        { 
-            newItem = new Potion(itemName, itemValue, 30); 
+        if(type == "Potion")
+        {
+            newItem = new Potion(itemName, itemValue, extraStat);
         }
 
-        else if(type == "Sword")       
-        { 
-            newItem = new Sword(itemName, itemValue, true, 10, 3); 
+        else if(type == "Sword")
+        {
+            newItem = new Sword(itemName, itemValue, true, 10, 3);
         }
-        
-        else if(type == "Staff")       
-        { 
-            newItem = new Staff(itemName, itemValue, true, 15); 
+
+        else if(type == "Staff")
+        {
+            newItem = new Staff(itemName, itemValue, true, 15);
         }
-        
-        else if(type == "Dagger")      
-        { 
-            newItem = new Dagger(itemName, itemValue, true, 10); 
+
+        else if(type == "Dagger")
+        {
+            newItem = new Dagger(itemName, itemValue, true, 10);
         }
-        
-        else if(type == "LightArmor")  
-        { 
-            newItem = new LightArmor(itemName, itemValue, true, 6); 
+
+        else if(type == "LightArmor")
+        {
+            newItem = new LightArmor(itemName, itemValue, true, 6);
         }
-        
-        else if(type == "MediumArmor") 
-        { 
-            newItem = new MediumArmor(itemName, itemValue, true, 8); 
+
+        else if(type == "MediumArmor")
+        {
+            newItem = new MediumArmor(itemName, itemValue, true, 8);
         }
-        
-        else if(type == "HeavyArmor")  
-        { 
-            newItem = new HeavyArmor(itemName, itemValue, true, 10); 
+
+        else if(type == "HeavyArmor")
+        {
+            newItem = new HeavyArmor(itemName, itemValue, true, 10);
         }
 
         if(newItem == nullptr)
@@ -923,7 +948,6 @@ bool Game::load(int slot)
             {
                 this->player->equipWeapon(w);
             }
-
         }
 
         else if(tag == "EQUIPPED_ARMOR")
@@ -934,14 +958,12 @@ bool Game::load(int slot)
             {
                 this->player->equipArmor(a);
             }
-
         }
 
         else if(tag == "ITEM")
         {
             this->player->getInventory()->addItem(newItem);
         }
-
     }
 
     for(int i = 0; i < shopData.size() && i < this->allShops.size(); i++)
@@ -952,47 +974,48 @@ bool Game::load(int slot)
         {
             std::istringstream ls(shopData[i][j]);
             std::string type, itemName;
-            int itemValue;
+            int itemValue, extraStat;
+            char pipe;
 
             std::getline(ls, type, '|');
             std::getline(ls, itemName, '|');
-            ls >> itemValue;
+            ls >> itemValue >> pipe >> extraStat;
 
             Item* newItem = nullptr;
 
-            if(type == "Potion")           
-            { 
-                newItem = new Potion(itemName, itemValue, 30); 
+            if(type == "Potion")
+            {
+                newItem = new Potion(itemName, itemValue, extraStat);
             }
 
-            else if(type == "Sword")       
-            { 
-                newItem = new Sword(itemName, itemValue, true, 10, 3); 
+            else if(type == "Sword")
+            {
+                newItem = new Sword(itemName, itemValue, true, 10, 3);
             }
 
-            else if(type == "Staff")       
-            { 
-                newItem = new Staff(itemName, itemValue, true, 15); 
+            else if(type == "Staff")
+            {
+                newItem = new Staff(itemName, itemValue, true, 15);
             }
-            
-            else if(type == "Dagger")      
-            { 
-                newItem = new Dagger(itemName, itemValue, true, 10); 
+
+            else if(type == "Dagger")
+            {
+                newItem = new Dagger(itemName, itemValue, true, 10);
             }
-            
-            else if(type == "LightArmor")  
-            { 
-                newItem = new LightArmor(itemName, itemValue, true, 6); 
+
+            else if(type == "LightArmor")
+            {
+                newItem = new LightArmor(itemName, itemValue, true, 6);
             }
-            
-            else if(type == "MediumArmor") 
-            { 
-                newItem = new MediumArmor(itemName, itemValue, true, 8); 
+
+            else if(type == "MediumArmor")
+            {
+                newItem = new MediumArmor(itemName, itemValue, true, 8);
             }
-            
-            else if(type == "HeavyArmor")  
-            { 
-                newItem = new HeavyArmor(itemName, itemValue, true, 10); 
+
+            else if(type == "HeavyArmor")
+            {
+                newItem = new HeavyArmor(itemName, itemValue, true, 10);
             }
 
             if(newItem != nullptr)
@@ -1001,6 +1024,7 @@ bool Game::load(int slot)
             }
 
         }
+
     }
 
     std::cout << "\033[1;32mGame loaded from slot " << slot << "!\033[0m\n";

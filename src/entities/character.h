@@ -39,13 +39,15 @@ class Character : public Entity
 
         int getMP() const;
 
+        int getMaxMP() const;
+
         int getGold() const;
 
         Weapon* getEquippedWeapon() const;
         
         Armor* getEquippedArmor() const;
 
-        void setStats(int HP, int maxHP, int level, int XP, int gold, int ATK, int DEF, int MP);
+        void setStats(int HP, int maxHP, int level, int XP, int gold, int ATK, int DEF, int MP, int maxMP);
 
         Inventory* getInventory() const;
 

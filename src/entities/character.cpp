@@ -35,6 +35,11 @@ int Character::getMP() const
     return this->MP;
 }
 
+int Character::getMaxMP() const
+{
+    return this->maxMP;
+}
+
 int Character::getGold() const
 {
     return this->gold;
@@ -50,7 +55,7 @@ Armor * Character::getEquippedArmor() const
     return this->equippedArmor;
 }
 
-void Character::setStats(int HP, int maxHP, int level, int XP, int gold, int ATK, int DEF, int MP)
+void Character::setStats(int HP, int maxHP, int level, int XP, int gold, int ATK, int DEF, int MP, int maxMP)
 {
     this->HP = HP;
     this->maxHP = maxHP;
@@ -60,6 +65,7 @@ void Character::setStats(int HP, int maxHP, int level, int XP, int gold, int ATK
     this->ATK = ATK;
     this->DEF = DEF;
     this->MP = MP;
+    this->maxMP = maxMP;
 }
 
 Inventory * Character::getInventory() const
