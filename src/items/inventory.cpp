@@ -1,6 +1,7 @@
 #include <iostream>
 #include "inventory.h"
 #include "item.h"
+#include "../entities/character.h"
 
 Inventory::Inventory(int maxSize)
     :maxSize(maxSize)
@@ -28,7 +29,6 @@ void Inventory::removeItem(int index)
 
 void Inventory::useItem(int index, Character& target)
 {
-
     if(index < 0 || index >= this->items.size())
     {
         std::cout << "Invalid index!" << '\n';
@@ -36,12 +36,12 @@ void Inventory::useItem(int index, Character& target)
     }
 
     Item* item = this->items[index];
-    item->use(target);
 
     Potion* potion = dynamic_cast<Potion*>(item);
 
     if(potion != nullptr)
     {
+        item->use(target);
         delete this->items[index];
         this->items.erase(this->items.begin() + index);
         return;
@@ -51,6 +51,14 @@ void Inventory::useItem(int index, Character& target)
 
     if(weapon != nullptr)
     {
+        
+        if(weapon->getAllowedClass() != target.getClassName())
+        {
+            std::cout << "\033[1;31mThis weapon is for " << weapon->getAllowedClass() << " only!\033[0m\n";
+            return;
+        }
+
+        item->use(target);
         this->items.erase(this->items.begin() + index);
         return;
     }
@@ -59,10 +67,17 @@ void Inventory::useItem(int index, Character& target)
 
     if(armor != nullptr)
     {
+
+        if(armor->getAllowedClass() != target.getClassName())
+        {
+            std::cout << "\033[1;31mThis armor is for " << armor->getAllowedClass() << " only!\033[0m\n";
+            return;
+        }
+
+        item->use(target);
         this->items.erase(this->items.begin() + index);
         return;
     }
-
 }
 
 void Inventory::getDescription() const
