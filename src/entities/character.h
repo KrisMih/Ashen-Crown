@@ -19,6 +19,7 @@ class Character : public Entity
         int MP;
         int maxMP;
         int gold;
+        float critChance;
 
     private:
         Inventory * inventory;
@@ -27,7 +28,7 @@ class Character : public Entity
         std::vector<StatusEffect*> effects;
 
     public:
-        Character(const std::string& name, int HP, int ATK, int DEF,int MP, int maxMP);
+        Character(const std::string& name, int HP, int ATK, int DEF,int MP, int maxMP, float critChance);
 
         int getLevel() const;
 

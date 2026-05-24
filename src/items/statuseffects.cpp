@@ -46,10 +46,13 @@ Poison::Poison(int stacks)
 
 void Poison::apply(Entity& target)
 {
+    int actualDamage = this->damage * this->stackCount;
+
     std::cout << "\033[32m[Poison] " << target.getName()
-              << " takes " << this->damage << " poison damage! ("
+              << " takes " << actualDamage << " poison damage! ("
               << this->duration << " turns left)\033[0m\n";
-    target.takeDamage(this->damage);
+
+    target.takeDamage(actualDamage);
     this->tick();
 }
 
@@ -61,10 +64,13 @@ Burn::Burn(int intensity)
 
 void Burn::apply(Entity& target)
 {
+    int actualDamage = this->damage * this->burnIntensity;
+
     std::cout << "\033[31m[Burn] " << target.getName()
-              << " takes " << this->damage << " burn damage! ("
+              << " takes " << actualDamage << " burn damage! ("
               << this->duration << " turns left)\033[0m\n";
-    target.takeDamage(this->damage);
+
+    target.takeDamage(actualDamage);
     this->tick();
 }
 

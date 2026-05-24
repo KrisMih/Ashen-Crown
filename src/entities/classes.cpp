@@ -5,7 +5,7 @@
 #include <algorithm>
 
 Warrior::Warrior(const std::string& name)
-    : Character(name, 120, 15, 10, 20, 20), rage(0)
+    :Character(name, 120, 15, 10, 20, 20, 0.1f)
 {
 
 }
@@ -129,7 +129,7 @@ void Warrior::berserker(Enemy& target)
 }
 
 Mage::Mage(const std::string& name)
-    : Character(name, 80, 8, 5, 80, 80), spellPower(20)
+    :Character(name, 90, 8, 5, 80, 80, 0.05f), spellPower(25)
 {
 
 }
@@ -152,9 +152,9 @@ void Mage::levelUp()
         this->DEF += 2;
         this->maxMP += 20;
         this->MP = this->maxMP;
-        this->spellPower += 5;
+        this->spellPower += 8;
         std::cout << "\033[1;33m★ LEVEL UP! You are now level " << this->level << "! ★\033[0m\n";
-        std::cout << "  HP max +" << 10 << " | ATK +" << 2 << " | DEF +" << 2 << " | MP +" << 20 << " | Spell Power +" << 5 << "\n";
+        std::cout << "  HP max +" << 20 << " | ATK +" << 2 << " | DEF +" << 2 << " | MP +" << 20 << " | Spell Power +" << 8 << "\n";
     }
 
 }
@@ -207,13 +207,13 @@ void Mage::useSkill(Enemy& target, int skillIndex)
 void Mage::fireball(Enemy& target)
 {
 
-    if(this->MP < 15) 
-    { 
-        std::cout << "Not enough MP!\n"; 
-        return; 
+    if(this->MP < 10)
+    {
+        std::cout << "Not enough MP!\n";
+        return;
     }
 
-    this->MP -= 15;
+    this->MP -= 10;
 
     if(target.isImmuneToFire())
     {
@@ -231,13 +231,13 @@ void Mage::fireball(Enemy& target)
 void Mage::iceBlast(Enemy& target)
 {
 
-    if(this->MP < 20) 
-    { 
-        std::cout << "Not enough MP!\n"; 
-        return; 
+    if(this->MP < 15)
+    {
+        std::cout << "Not enough MP!\n";
+        return;
     }
 
-    this->MP -= 20;
+    this->MP -= 15;
 
     if(target.isImmuneToCold())
     {
@@ -255,13 +255,13 @@ void Mage::iceBlast(Enemy& target)
 void Mage::thunderstorm(Enemy& target)
 {
 
-    if(this->MP < 40) 
-    { 
-        std::cout << "Not enough MP!\n"; 
-        return; 
+    if(this->MP < 25)
+    {
+        std::cout << "Not enough MP!\n";
+        return;
     }
 
-    this->MP -= 40;
+    this->MP -= 25;
     int dmg = this->spellPower + 70;
     std::cout << "\033[1;33m⚡ Thunderstorm!\033[0m Lightning strikes "
               << target.getName() << " for " << dmg << " damage!\n";
@@ -269,7 +269,7 @@ void Mage::thunderstorm(Enemy& target)
 }
 
 Rogue::Rogue(const std::string& name)
-    : Character(name, 90, 12, 7, 50, 50), critChance(0.25f), stealth(false)
+    :Character(name, 100, 12, 9, 50, 50, 0.25f)
 {
 
 }
@@ -302,16 +302,16 @@ void Rogue::levelUp()
 void Rogue::showSkills() const
 {
     std::cout << "\033[1;35m  Skills (Rogue):\033[0m\n";
-    std::cout << "  1. Backstab     — 3x damage             [Lv.1] [10 MP]\n";
+    std::cout << "  1. Backstab     — 3.5x damage           [Lv.1] [10 MP]\n";
 
     if(this->level >= 3)
     {
-        std::cout << "  2. Poison Blade — damage + poison       [Lv.3] [15 MP]\n";
+        std::cout << "  2. Poison Blade — damage + poison       [Lv.3] [10 MP]\n";
     }
 
-    if(this->level >= 5)
+    if(this->level >= 4)
     {
-        std::cout << "  3. Shadow Step  — 2x damage + evade     [Lv.5] [20 MP]\n";
+        std::cout << "  3. Shadow Step  — 2x damage + evade     [Lv.4] [15 MP]\n";
     }
 
 }
@@ -319,42 +319,42 @@ void Rogue::showSkills() const
 void Rogue::useSkill(Enemy& target, int skillIndex)
 {
 
-    if(skillIndex == 1) 
-    { 
-        backstab(target); 
-        return; 
+    if(skillIndex == 1)
+    {
+        backstab(target);
+        return;
     }
 
-    if(skillIndex == 2 && this->level >= 3) 
-    { 
-        poisonBlade(target); 
-        return; 
+    if(skillIndex == 2 && this->level >= 3)
+    {
+        poisonBlade(target);
+        return;
     }
 
-    if(skillIndex == 3 && this->level >= 5) 
-    { 
-        shadowStep(target); 
-        return; 
+    if(skillIndex == 3 && this->level >= 4)
+    {
+        shadowStep(target);
+        return;
     }
 
     else
     {
         throw std::invalid_argument("You can't use this skill, yet!");
     }
-    
+
 }
 
 void Rogue::backstab(Enemy& target)
 {
 
-    if(this->MP < 10) 
-    { 
-        std::cout << "Not enough MP!\n"; 
-        return; 
+    if(this->MP < 10)
+    {
+        std::cout << "Not enough MP!\n";
+        return;
     }
-    
+
     this->MP -= 10;
-    int dmg = this->ATK * 3;
+    int dmg = (int)(this->ATK * 3.5f);
     std::cout << "\033[1;35m🗡 Backstab!\033[0m " << this->name
               << " strikes from the shadows for " << dmg << " damage!\n";
     target.takeDamage(dmg);
@@ -363,13 +363,13 @@ void Rogue::backstab(Enemy& target)
 void Rogue::poisonBlade(Enemy& target)
 {
 
-    if(this->MP < 15) 
-    { 
-        std::cout << "Not enough MP!\n"; 
-        return; 
+    if(this->MP < 10)
+    {
+        std::cout << "Not enough MP!\n";
+        return;
     }
 
-    this->MP -= 15;
+    this->MP -= 10;
 
     if(target.isImmuneToPoison())
     {
@@ -387,13 +387,13 @@ void Rogue::poisonBlade(Enemy& target)
 void Rogue::shadowStep(Enemy& target)
 {
 
-    if(this->MP < 20) 
-    { 
-        std::cout << "Not enough MP!\n"; 
-        return; 
+    if(this->MP < 15)
+    {
+        std::cout << "Not enough MP!\n";
+        return;
     }
 
-    this->MP -= 20;
+    this->MP -= 15;
     int dmg = this->ATK * 2 + 20;
     std::cout << "\033[1;35m👤 Shadow Step!\033[0m " << this->name
               << " vanishes and reappears for " << dmg << " damage!\n";

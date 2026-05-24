@@ -5,9 +5,6 @@ class Enemy;
 
 class Warrior : public Character
 {
-    private:
-        int rage;
-
     public:
         Warrior(const std::string& name);
 
@@ -53,10 +50,6 @@ class Mage : public Character
 
 class Rogue : public Character
 {
-    private:
-        float critChance;
-        bool stealth;
-
     public:
         Rogue(const std::string& name);
 

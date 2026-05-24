@@ -39,7 +39,7 @@ void Game::buildWorld()
     rogueShop->addItem(new Potion("Health Potion", 20, 30));
 
     Shop* mageShop = new Shop("Arcane Library");
-    mageShop->addItem(new Staff("Oak Staff", 55, true, 18));
+    mageShop->addItem(new Staff("Oak Staff", 55, true, 25));
     mageShop->addItem(new LightArmor("Silk Robe", 65, true, 6));
     mageShop->addItem(new Potion("Health Potion", 20, 30));
 
@@ -47,7 +47,7 @@ void Game::buildWorld()
     midShop->addItem(new Sword("Iron Sword", 50, true, 12, 3));
     midShop->addItem(new HeavyArmor("Iron Plate", 80, true, 10));
     midShop->addItem(new Dagger("Steel Dagger", 45, true, 10));
-    midShop->addItem(new Staff("Battle Staff", 45, true, 12));
+    midShop->addItem(new Staff("Battle Staff", 45, true, 20));
     midShop->addItem(new Potion("Health Potion", 20, 30));
 
     Shop* lateShop = new Shop("Wandering Merchant");
@@ -55,7 +55,7 @@ void Game::buildWorld()
     lateShop->addItem(new Potion("Mega Potion", 100, 150));
     lateShop->addItem(new Sword("Steel Sword", 120, true, 20, 5));
     lateShop->addItem(new Dagger("Venom Dagger", 110, true, 18));
-    lateShop->addItem(new Staff("Crystal Staff", 110, true, 22));
+    lateShop->addItem(new Staff("Crystal Staff", 110, true, 35));
 
     Room* start         = new Room("Ashenvale Village",
         "A quiet village at the edge of a dark forest.");

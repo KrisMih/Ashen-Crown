@@ -4,10 +4,11 @@
 #include "../items/item.h"
 #include "../items/statuseffects.h"
 
-Character::Character(const std::string& name, int HP, int ATK, int DEF, int MP, int maxMP)
-    :Entity(name, HP), ATK(ATK), DEF(DEF), MP(MP), level(1), gold(0), XP(0), inventory(nullptr), equippedWeapon(nullptr), equippedArmor(nullptr), maxMP(maxMP)
-{
 
+Character::Character(const std::string& name, int HP, int ATK, int DEF, int MP, int maxMP, float critChance)
+    :Entity(name, HP), level(1), XP(0), ATK(ATK), DEF(DEF), MP(MP), maxMP(maxMP), gold(0), critChance(critChance), inventory(nullptr), equippedWeapon(nullptr), equippedArmor(nullptr)
+{
+    
 }
 
 int Character::getLevel() const
@@ -269,6 +270,15 @@ void Character::showStats() const
 void Character::attack(Entity& target)
 {
     int dmg = std::max(1, this->ATK - 2);
+
+    float roll = (float)(rand() % 100) / 100.0f;
+
+    if(roll < this->critChance)
+    {
+        dmg *= 2;
+        std::cout << "\033[1;33m★ CRITICAL HIT! ★\033[0m ";
+    }
+
     std::cout << this->name << " attacks " << target.getName()
               << " for " << dmg << " damage!\n";
     target.takeDamage(dmg);
