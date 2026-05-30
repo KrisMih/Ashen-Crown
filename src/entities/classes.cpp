@@ -159,6 +159,16 @@ void Mage::levelUp()
 
 }
 
+int Mage::getSpellPower() const 
+{
+    return this->spellPower;
+}
+
+void Mage::setSpellPower(int power)
+{
+    this->spellPower = power;
+}
+
 void Mage::showSkills() const
 {
     std::cout << "\033[1;34m  Skills (Mage):\033[0m\n";

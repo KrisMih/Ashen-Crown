@@ -3,6 +3,7 @@
 #include "enemy.h"
 #include "character.h"
 #include "../items/statuseffects.h"
+#include "../items/item.h"
 #include "entity.h"
 
 Enemy::Enemy(const std::string& name, int HP, int ATK, int DEF, int XPreward, int goldReward, const std::string& description)
@@ -114,6 +115,11 @@ bool Enemy::isStunned() const
     }
     
     return false;
+}
+
+Item* Enemy::dropLoot() const
+{
+    return nullptr;
 }
 
 void Enemy::displayStatus() const
@@ -231,6 +237,12 @@ void Orc::attack(Entity& target)
     target.takeDamage(damage);
 }
 
+
+Item* Orc::dropLoot() const
+{
+    return new Sword("Orcish Cleaver", 20, true, 8, 2);
+}
+
 Dragon::Dragon()
     : Enemy("Dragon", 150, 28, 8, 600, 150, "An ancient beast wreathed in fire."), turnCount(0), fireDMG(45)
 {
@@ -262,12 +274,23 @@ void Dragon::attack(Entity& target)
 
 }
 
+Item* Skeleton::dropLoot() const
+{
+    return new Dagger("Bone Dagger", 15, true, 6);
+}
+
 void Dragon::fireBreath(Entity& target)
 {
     std::cout << "\033[1;31m" << this->name << " breathes fire at "
               << target.getName() << " for " << this->fireDMG << " damage!\033[0m\n";
     target.takeDamage(this->fireDMG);
 }
+
+Item* Dragon::dropLoot() const
+{
+    return new Staff("Dragonbone Staff", 100, true, 25);
+}
+
 
 FallenKing::FallenKing()
     : Enemy("The Fallen King", 500, 40, 15, 1000, 500, "The corrupted ruler of Ashen Crown. He commands fire, ice and darkness."),
@@ -328,4 +351,9 @@ void FallenKing::crownOfAshes(Entity& target)
     std::cout << "\033[1;31mCrown of Ashes!\033[0m The Fallen King unleashes ash and fire for "
               << dmg << " damage!\n";
     target.takeDamage(dmg);
+}
+
+Item* FallenKing::dropLoot() const
+{
+    return new Sword("Blade of the Fallen", 200, false, 20, 5); 
 }

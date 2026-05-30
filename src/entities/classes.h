@@ -40,6 +40,10 @@ class Mage : public Character
 
         std::string getClassName() const override;
 
+        int getSpellPower() const;
+
+        void setSpellPower(int power);
+
     private:
         void fireball(Enemy& target);  
 

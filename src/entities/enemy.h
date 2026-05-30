@@ -6,6 +6,7 @@
 #include <string>
 
 class Character;
+class Item;
 
 class Enemy : public Entity
 {
@@ -56,6 +57,8 @@ class Enemy : public Entity
 
         void processEffects();
 
+        virtual Item * dropLoot() const;
+
         void displayStatus() const override;
 
         virtual ~Enemy();
@@ -75,6 +78,8 @@ class Skeleton : public Enemy
         Skeleton();
 
         void attack(Entity& target) override;
+
+        Item * dropLoot() const override;
 };
 
 class Orc : public Enemy
@@ -83,6 +88,8 @@ class Orc : public Enemy
         Orc();
 
         void attack(Entity& target) override;
+
+        Item * dropLoot() const override;
 };
 
 class Dragon : public Enemy
@@ -95,6 +102,8 @@ class Dragon : public Enemy
         Dragon();
 
         void attack(Entity& target) override;
+
+        Item * dropLoot() const override;
     
     private:
         void fireBreath(Entity& target);
@@ -116,4 +125,6 @@ class FallenKing : public Enemy
         void soulRend(Entity& target);
         
         void crownOfAshes(Entity& target);
+
+        Item * dropLoot() const override;
 };

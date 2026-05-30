@@ -115,11 +115,20 @@ void Character::levelUp()
 void Character::equipWeapon(Weapon* weapon)
 {
 
+    if(this->equippedWeapon != nullptr && weapon != nullptr && this->inventory->isFull())
+    {
+        std::cout << "\033[1;31mInventory is full! Cannot unequip old weapon.\033[0m\n";
+        this->inventory->addItem(weapon); 
+        return; 
+    }
+
     if(this->equippedWeapon != nullptr)
     {
         this->ATK -= this->equippedWeapon->getATKbonus();
         this->DEF -= this->equippedWeapon->getDEFbonus();
         this->MP  -= this->equippedWeapon->getMPbonus();
+
+        this->inventory->addItem(this->equippedWeapon);
     }
 
     this->equippedWeapon = weapon;
@@ -130,7 +139,6 @@ void Character::equipWeapon(Weapon* weapon)
         this->DEF += weapon->getDEFbonus();
         this->MP  += weapon->getMPbonus();
     }
-    
 }
 
 void Character::unequipWeapon()
@@ -138,20 +146,38 @@ void Character::unequipWeapon()
 
     if(this->equippedWeapon != nullptr)
     {
+
+        if(this->inventory->isFull())
+        {
+            std::cout << "\033[1;31mInventory is full! Cannot unequip weapon.\033[0m\n";
+            return;
+        }
+
         this->ATK -= this->equippedWeapon->getATKbonus();
         this->DEF -= this->equippedWeapon->getDEFbonus();
         this->MP  -= this->equippedWeapon->getMPbonus();
+
+        this->inventory->addItem(this->equippedWeapon);
+        this->equippedWeapon = nullptr;
     }
 
-    this->equippedWeapon = nullptr;
 }
 
 void Character::equipArmor(Armor* armor)
 {
+    
+    if(this->equippedArmor != nullptr && armor != nullptr && this->inventory->isFull())
+    {
+        std::cout << "\033[1;31mInventory is full! Cannot unequip old armor.\033[0m\n";
+        this->inventory->addItem(armor);
+        return;
+    }
 
     if(this->equippedArmor != nullptr)
     {
         this->DEF -= this->equippedArmor->getDEFbonus();
+        
+        this->inventory->addItem(this->equippedArmor);
     }
 
     this->equippedArmor = armor;
@@ -165,13 +191,19 @@ void Character::equipArmor(Armor* armor)
 
 void Character::unequipArmor()
 {
-
     if(this->equippedArmor != nullptr)
     {
-        this->DEF -= this->equippedArmor->getDEFbonus();
-    }
+        if(this->inventory->isFull())
+        {
+            std::cout << "\033[1;31mInventory is full! Cannot unequip armor.\033[0m\n";
+            return;
+        }
 
-    this->equippedArmor = nullptr;
+        this->DEF -= this->equippedArmor->getDEFbonus();
+        
+        this->inventory->addItem(this->equippedArmor);
+        this->equippedArmor = nullptr;
+    }
 }
 
 void Character::addEffect(StatusEffect * effect)

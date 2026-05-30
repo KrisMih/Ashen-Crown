@@ -257,14 +257,15 @@ void Game::buildWorld()
     this->clearedRooms.resize(this->allRooms.size(), false);
 }
 
+// ...existing code...
 void Game::start()
 {
     std::cout << "\033[1;31m";
-    std::cout << "  ___        _                    ____                           \n";
-    std::cout << " / _ \\      | |                  / ___|_ __ _____      ___ __  \n";
-    std::cout << "| | | |_____| |__   ___ _ __    | |   | '__/ _ \\ \\ /\\ / / '_ \\ \n";
-    std::cout << "| |_| |_____| '_ \\ / _ \\ '_ \\   | |___| | | (_) \\ V  V /| | | |\n";
-    std::cout << " \\__\\_\\     |_| |_|\\___/_| |_|   \\____|_|  \\___/ \\_/\\_/ |_| |_|\n";
+    std::cout << "    _       _                 ____                          \n";
+    std::cout << "   / \\  ___| |__   ___ _ __  / ___|_ __ _____      ___ __   \n";
+    std::cout << "  / _ \\/ __| '_ \\ / _ \\ '_ \\| |   | '__/ _ \\ \\ /\\ / / '_ \\  \n";
+    std::cout << " / ___ \\__ \\ | | |  __/ | | | |___| | | (_) \\ V  V /| | | | \n";
+    std::cout << "/_/   \\_\\___/_| |_|\\___|_| |_|\\____|_|  \\___/ \\_/\\_/ |_| |_|\n";
     std::cout << "\033[0m\n";
     std::cout << "\033[1;33m          ~ Ashen Crown ~\033[0m\n\n";
 
@@ -367,9 +368,31 @@ void Game::run()
 
 void Game::processCommand(const std::string& cmd)
 {
-    if(cmd == "north" || cmd == "south" || cmd == "east" || cmd == "west")
+    std::string direction = "";
+
+    if(cmd == "north" || cmd == "\033[A" || cmd == "w") 
     {
-        Room* next = this->currentRoom->getExit(cmd);
+        direction = "north";
+    }
+
+    else if(cmd == "south" || cmd == "\033[B" || cmd == "s") 
+    {
+        direction = "south";
+    }
+
+    else if(cmd == "east" || cmd == "\033[D" || cmd == "a") 
+    {
+        direction = "east";
+    }
+
+    else if(cmd == "west" || cmd == "\033[C" || cmd == "d") 
+    {
+        direction = "west";
+    }
+
+    if(direction != "")
+    {
+        Room* next = this->currentRoom->getExit(direction);
 
         if(next == nullptr)
         {
@@ -443,7 +466,7 @@ void Game::processCommand(const std::string& cmd)
 
     else
     {
-        std::cout << "Unknown command. Try: north/south/east/west, fight, shop, talk, inventory, stats, save, quit\n";
+        std::cout << "Unknown command. Try: w/a/s/d (or arrows), fight, shop, talk, inventory, stats, save, quit\n";
     }
 
 }
@@ -621,11 +644,26 @@ void Game::combat(Room* room)
 
         float roll = (float)(rand() % 100) / 100.0f;
 
-        if(enemy->getDropReward() != nullptr && roll <= enemy->getDropChance())
+        if(roll <= enemy->getDropChance())
         {
-            std::cout << "\033[1;33m" << enemy->getName() << " dropped "
-                      << enemy->getDropReward()->getName() << "!\033[0m\n";
-            this->player->getInventory()->addItem(enemy->getDropReward());
+            Item* droppedItem = enemy->dropLoot();
+            
+            if(droppedItem != nullptr)
+            {
+                if(this->player->getInventory()->isFull())
+                {
+                    std::cout << "\033[1;31mInventory is full! " << enemy->getName()
+                              << " dropped " << droppedItem->getName() 
+                              << ", but you have no space. It was left behind.\033[0m\n";
+                    delete droppedItem;
+                }
+                else
+                {
+                    std::cout << "\033[1;33m" << enemy->getName() << " dropped "
+                              << droppedItem->getName() << "!\033[0m\n";
+                    this->player->getInventory()->addItem(droppedItem);
+                }
+            }
         }
 
         this->player->levelUp();
@@ -681,6 +719,7 @@ void Game::showSaveSlots() const
 
 }
 
+// ...existing code...
 void Game::save(int slot)
 {
     std::ofstream file(this->getSavePath(slot));
@@ -701,7 +740,17 @@ void Game::save(int slot)
          << this->player->getATK() << " "
          << this->player->getDEF() << " "
          << this->player->getMP() << " "
-         << this->player->getMaxMP() << "\n";
+         << this->player->getMaxMP() << " ";
+
+    if(this->player->getClassName() == "Mage")
+    {
+        Mage* mage = dynamic_cast<Mage*>(this->player);
+        file << mage->getSpellPower() << "\n";
+    }
+    else
+    {
+        file << "0\n";
+    }
 
     file << this->currentRoom->getName() << "\n";
 
@@ -793,11 +842,11 @@ bool Game::load(int slot)
     }
 
     std::string className, name, roomName;
-    int HP, maxHP, level, XP, gold, ATK, DEF, MP, maxMP;
+    int HP, maxHP, level, XP, gold, ATK, DEF, MP, maxMP, specialStat;
 
     std::getline(file, className);
     std::getline(file, name);
-    file >> HP >> maxHP >> level >> XP >> gold >> ATK >> DEF >> MP >> maxMP;
+    file >> HP >> maxHP >> level >> XP >> gold >> ATK >> DEF >> MP >> maxMP >> specialStat;
     file.ignore();
     std::getline(file, roomName);
 
@@ -859,6 +908,7 @@ bool Game::load(int slot)
     else if(className == "Mage")
     {
         this->player = new Mage(name);
+        dynamic_cast<Mage*>(this->player)->setSpellPower(specialStat);
     }
 
     else
